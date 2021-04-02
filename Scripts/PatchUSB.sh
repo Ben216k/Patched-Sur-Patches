@@ -120,23 +120,22 @@ echo "PatchKexts.sh cannot be added yet."
 
 # MARK: Setup Trampoline App
 
-echo "Trampoline.app cannot be added yet."
-#echo 'Setting up trampoline app...'
-#TEMPAPP="$INSTALLER/tmp.app"
-#mv -f "$APPPATH" "$TEMPAPP"
-#cp -r "$MICROPATCHER/trampoline.app" "$APPPATH"
-#mv -f "$TEMPAPP" "$APPPATH/Contents/MacOS/InstallAssistant.app"
-#cp "$APPPATH/Contents/MacOS/InstallAssistant" "$APPPATH/Contents/MacOS/InstallAssistant_plain"
-#cp "$APPPATH/Contents/MacOS/InstallAssistant" "$APPPATH/Contents/MacOS/InstallAssistant_springboard"
-#pushd "$APPPATH/Contents" > /dev/null
-#for item in `cd MacOS/InstallAssistant.app/Contents;ls -1 | fgrep -v MacOS`
-#do
-#    ln -s MacOS/InstallAssistant.app/Contents/$item .
-#done
-#popd > /dev/null
-#touch "$APPPATH"
-#echo 'Setup trampoline app.'
-#echo
+echo 'Setting up trampoline app...'
+TEMPAPP="$INSTALLER/tmp.app"
+mv -f "$APPPATH" "$TEMPAPP"
+cp -r "$PATCHES/InstallerPatches/trampoline.app" "$APPPATH"
+mv -f "$TEMPAPP" "$APPPATH/Contents/MacOS/InstallAssistant.app"
+cp "$APPPATH/Contents/MacOS/InstallAssistant" "$APPPATH/Contents/MacOS/InstallAssistant_plain"
+cp "$APPPATH/Contents/MacOS/InstallAssistant" "$APPPATH/Contents/MacOS/InstallAssistant_springboard"
+pushd "$APPPATH/Contents" > /dev/null
+for item in `cd MacOS/InstallAssistant.app/Contents;ls -1 | fgrep -v MacOS`
+do
+    ln -s MacOS/InstallAssistant.app/Contents/$item .
+done
+popd > /dev/null
+touch "$APPPATH"
+echo 'Setup trampoline app.'
+echo
 
 # MARK: Confirm Permissions
 
