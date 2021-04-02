@@ -51,9 +51,9 @@ echo 'Installer USB Detected!'
 
 echo
 
-echo 'Detecting patches at ~/.patched-sur/Patched-Sur-Patches...'
+echo 'Detecting patches at /usr/local/lib/Patched-Sur-Patches...'
 
-PATCHES=~/.patched-sur/Patched-Sur-Patches
+PATCHES='/usr/local/lib/Patched-Sur-Patches'
 
 if [ ! -d "$PATCHES" ]
 then
@@ -61,7 +61,7 @@ then
     echo 'Please be sure that the Patched Sur Patches is in'
     echo 'the directory it is supposed to be in and this'
     echo 'script is being run in Patched Sur after the'
-    echo 'patches have been downloaded.'
+    echo 'patches have been copied.'
     error 'Error 2x1 Patched Sur Patches Not Found'
 fi
 

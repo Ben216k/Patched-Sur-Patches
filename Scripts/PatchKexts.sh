@@ -76,14 +76,8 @@ else
         LPATCHES="/Volumes/Install macOS Big Sur Beta"
     elif [[ -d "/Volumes/Install macOS Beta" ]]; then
         LPATCHES="/Volumes/Install macOS Beta"
-    elif [[ -d "/Users/$(whoami)/.patched-sur/Patched-Sur-Patches" ]]; then
-        LPATCHES="/Users/$(whoami)/.patched-sur/Patched-Sur-Patches"
-    elif [[ -e "/Applications/Patched Sur.app/Resources/Patched-Sur-Patches.zip" ]]; then
-        echo "Using backup patches"
-        mkdir -p ~/.patched-sur/Patched-Sur-Patches
-        rm -rf ~/.patched-sur/__MACOSX
-        unzip /Users/bensova/Downloads/Hentai.zip -d ~/.patched-sur/Patched-Sur-Patches
-        LPATCHES="/Users/$(whoami)/.patched-sur/Patched-Sur-Patches"
+    elif [[ -d "/usr/local/lib/Patched-Sur-Patches" ]]; then
+        LPATCHES="/usr/local/lib/Patched-Sur-Patches"
     fi
 fi
 
