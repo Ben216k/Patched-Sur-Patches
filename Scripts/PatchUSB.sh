@@ -109,14 +109,14 @@ echo
 
 # MARK: Add Backup Scripts
 
-echo "PatchKexts.sh cannot be added yet."
-#echo 'Adding Backup Scripts...'
-#echo 'Adding patch-kexts.sh...'
-#cp -f "$MICROPATCHER/patch-kexts.sh" "$INSTALLER" || error 'Error 2x2 Unable to add patch-kexts.sh'
+#echo "PatchKexts.sh cannot be added yet."
+echo 'Adding Backup Scripts...'
+echo 'Adding patch-kexts.sh...'
+cp -f "$PATCHES/Scripts/PatchKexts.sh" "$INSTALLER" || error 'Error 2x2 Unable to add patch-kexts.sh'
 echo 'Adding extra commands...'
 cp -a $PATCHES/ArchiveBin "$INSTALLER/bin" || error 'Error 2x2 Unable to add extra commands.'
-echo 'Added extra commands...'
-#echo 'Added Backup Scripts...'
+#echo 'Added extra commands...'
+echo 'Added Backup Scripts...'
 #echo
 
 # MARK: Setup Trampoline App
