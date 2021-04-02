@@ -160,13 +160,11 @@ echo 'Post Install App cannot be added yet.'
 
 echo
 
-echo 'Icon cannot be themed yet.'
+echo 'Theming the installer icon...'
 
-#echo 'Theming the installer icon...'
-#
-#cp -rf /Volumes/Patched-Sur/.InstallIcon.icns "$INSTALLER"/.VolumeIcon.icns
-#
-#echo 'Themed (or at least tried to) the installer icon'
+cp -rf $PATCHES/Images/InstallIcon.icns "$INSTALLER"/.VolumeIcon.icns
+
+echo 'Themed (or at least tried to) the installer icon'
 
 echo
 
@@ -356,11 +354,8 @@ else
     cp -r EFISetvars/EFI /Volumes/EFI/EFI
 fi
 
-echo 'Cannot add icons yet.'
-
-#echo 'Adding icons...'
-#
-#cp -rf /Volumes/Patched-Sur/.EFIIcon.icns /Volumes/EFI/.VolumeIcon.icns
+echo 'Adding icons...'
+cp -rf $PATCHES/Images/EFIIcon.icns /Volumes/EFI/.VolumeIcon.icns
 
 echo "Unmounting EFI volume (if this fails, just eject in Finder afterward)."
 umount /Volumes/EFI || diskutil unmount /Volumes/EFI
