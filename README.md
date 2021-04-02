@@ -1,4 +1,7 @@
-# Patched Sur Patches
+# PLEASE IGNORE THIS REPO
+## It literally does nothing on it's own.
+### You need the updated patcher app to use this.
+#### So... please go away.
 
 Patched Sur will soon remove all dependencies from the micropatcher. While I'm not excited to do this, maintaining my own copy of all of the patches is the only way for Patched Sur to support itself as a true patcher.
 
