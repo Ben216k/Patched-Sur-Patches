@@ -113,8 +113,9 @@ echo "PatchKexts.sh cannot be added yet."
 #echo 'Adding Backup Scripts...'
 #echo 'Adding patch-kexts.sh...'
 #cp -f "$MICROPATCHER/patch-kexts.sh" "$INSTALLER" || error 'Error 2x2 Unable to add patch-kexts.sh'
-#echo 'Adding extra commands...'
-#cp -rf ~/.patched-sur/big-sur-micropatcher/payloads/bin "$INSTALLER" || error 'Error 2x2 Unable to add extra commands.'
+echo 'Adding extra commands...'
+cp -a $PATCHES/ArchiveBin "$INSTALLER/bin" || error 'Error 2x2 Unable to add extra commands.'
+echo 'Added extra commands...'
 #echo 'Added Backup Scripts...'
 #echo
 
@@ -141,8 +142,7 @@ echo
 
 echo 'Confirming script permissions...'
 
-chmod -R u+x "$INSTALLER"/*.sh "$INSTALLER"/InstallerHax/*.dylib
-# "$INSTALLER"/bin
+chmod -R u+x "$INSTALLER"/*.sh "$INSTALLER"/InstallerHax/*.dylib "$INSTALLER"/bin
 
 echo 'Confirmed permissions...'
 
