@@ -22,7 +22,7 @@ error() {
     exit 1
 }
 
-echo 'Welcome to PatchUSB.sh (for Patched Sur)!'
+echo "Welcome to PatchUSB.sh (for Patched Sur)!"
 echo 'This script should really only be used'
 echo 'through the Patched Sur app unless being'
 echo 'tested for patcher development'
@@ -65,7 +65,7 @@ then
     error 'Error 2x1 Patched Sur Patches Not Found'
 fi
 
-echo 'Detecting resource argument...'
+echo "Detecting resource argument at $1..."
 
 if [ ! -d "$1/Patched Sur - Recovery.app" ]
 then
@@ -154,7 +154,7 @@ echo
 
 echo 'Confirming script permissions...'
 
-chmod -R u+x "$INSTALLER"/*.sh "$INSTALLER"/InstallerHax/*.dylib "$INSTALLER"/bin
+chmod -R u+x "$INSTALLER"/*.sh "$INSTALLER"/InstallerHax/*.dylib "$INSTALLER"/ArchiveBin
 
 echo 'Confirmed permissions...'
 
@@ -194,7 +194,7 @@ echo 'Adding new Utilities.plist...'
 cp -rf "$PATCHES/InstallerPatches/Utilities.plist" "Utilities.plist" || error 'Error 2x3: Unable to replace Utilities.plist.'
 
 cd "/Volumes/macOS Base System/Applications"
-echo 'Removing old patcher app (if it\'s there)'
+echo "Removing old patcher app if it's there"
 rm -rf "Patched Sur - Recovery.app"
 echo 'Adding new patcher app...'
 cp -a "$RESOURCES/Patched Sur - Recovery.app" "Patched Sur - Recovery.app" || error 'Error 2x3: Unable to add patcher recovery app.'
