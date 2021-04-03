@@ -114,7 +114,7 @@ echo 'Adding Backup Scripts...'
 echo 'Adding patch-kexts.sh...'
 cp -f "$PATCHES/Scripts/PatchKexts.sh" "$INSTALLER" || error 'Error 2x2 Unable to add patch-kexts.sh'
 echo 'Adding extra commands...'
-cp -a $PATCHES/ArchiveBin "$INSTALLER/bin" || error 'Error 2x2 Unable to add extra commands.'
+cp -a $PATCHES/ArchiveBin "$INSTALLER/ArchiveBin" || error 'Error 2x2 Unable to add extra commands.'
 #echo 'Added extra commands...'
 echo 'Added Backup Scripts...'
 #echo
@@ -180,7 +180,7 @@ echo 'Now installing SetVars tool...'
 
 # MARK: Install SetVars
 
-# This code is from the micropatcher. I only have it here because I want to make it easier for some users to visualize what drive there Mac is booting to.
+# This code is from the micropatcher.
 
 checkDirAccess() {
     # List the two directories, but direct both stdout and stderr to
