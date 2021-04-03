@@ -186,6 +186,7 @@ echo
 
 echo 'Mounting BaseSystem...'
 
+rm -rf "$INSTALLER/BaseSystem/BaseSystem.dmg.shadow"
 hdiutil attach -owners on "$INSTALLER/BaseSystem/BaseSystem.dmg" -nobrowse -shadow || error 'Error 2x3: Unable to shadow mount BaseSystem.'
 
 cd "/Volumes/macOS Base System/System/Installation/CDIS/Recovery Springboard.app/Contents/Resources"
