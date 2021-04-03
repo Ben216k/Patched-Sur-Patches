@@ -18,20 +18,20 @@ then
     if ! nvram -p | fgrep -q csr-active-config
     then
         # csr-active-config not set, so macOS defaults to SIP/ARV enabled
-        HAX=HaxSeal.dylib
+        HAX=YesSeal.dylib
     elif nvram csr-active-config | fgrep -q '%10%00%00%00'
     then
         # csr-active-config configured to enable SIP/ARV
-        HAX=HaxSeal.dylib
+        HAX=YesSeal.dylib
     else
-        HAX=HaxDoNotSeal.dylib
+        HAX=NoSeal.dylib
     fi
 
     # Make sure there isn't already a dylib being inserted. That way
     # insert-hax.sh will still work (for manually specifying whether
     # volume sealing happens).
 
-    [ -z `launchctl getenv DYLD_INSERT_LIBRARIES` ] && launchctl setenv DYLD_INSERT_LIBRARIES "/Volumes/Image Volume/$HAX"
+    [ -z `launchctl getenv DYLD_INSERT_LIBRARIES` ] && launchctl setenv DYLD_INSERT_LIBRARIES "/Volumes/Image Volume/InstallerHax/$HAX"
 
 fi
 

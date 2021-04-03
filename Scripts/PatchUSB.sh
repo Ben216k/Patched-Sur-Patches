@@ -184,10 +184,26 @@ echo
 
 # MARK: BaseSystem Patching
 
+echo "Removing file that doesn't matter"
+rm -rf "$INSTALLER/BaseSystem/BaseSystem.dmg.shadow" || echo "Failed to remove this file that doesn't matter"
+
+echo 'Safety sleep'
+sleep 30
+
+echo "Removing file that doesn't matter"
+rm -rf "$INSTALLER/BaseSystem/BaseSystem.dmg.shadow" || echo "Failed to remove this file that doesn't matter"
+
 echo 'Mounting BaseSystem...'
 
-rm -rf "$INSTALLER/BaseSystem/BaseSystem.dmg.shadow"
-hdiutil attach -owners on "$INSTALLER/BaseSystem/BaseSystem.dmg" -nobrowse -shadow || error 'Error 2x3: Unable to shadow mount BaseSystem.'
+function reHDI {
+    echo "RM -RFing"
+    rm -rf "/Volumes/Install macOS Big Sur/BaseSystem/BaseSystem.dmg.shadow" || echo "Failed to remove this file that doesn't matter"
+    rm -rf "/Volumes/Install macOS Big Sur Beta/BaseSystem/BaseSystem.dmg.shadow" || echo "Failed to remove this file that doesn't matter"
+    echo "Mounting BaseSystem, try 2..."
+    hdiutil attach -owners on "$INSTALLER/BaseSystem/BaseSystem.dmg" -nobrowse -shadow || error 'Error 2x3: Unable to shadow mount BaseSystem.'
+}
+
+hdiutil attach -owners on "$INSTALLER/BaseSystem/BaseSystem.dmg" -nobrowse -shadow || reHDI
 
 cd "/Volumes/macOS Base System/System/Installation/CDIS/Recovery Springboard.app/Contents/Resources"
 
@@ -198,7 +214,7 @@ cd "/Volumes/macOS Base System/Applications"
 echo "Removing old patcher app if it's there"
 rm -rf "Patched Sur - Recovery.app"
 echo 'Adding new patcher app...'
-cp -a "$RESOURCES/Patched Sur - Recovery.app" "Patched Sur - Recovery.app" || error 'Error 2x3: Unable to add patcher recovery app.'
+cp -a "$RESOURCEDIR/Patched Sur - Recovery.app" "Patched Sur - Recovery.app" || error 'Error 2x3: Unable to add patcher recovery app.'
 
 cd "/Volumes/macOS Base System/usr/lib"
 echo 'Unzipping Swift frameworks into library'
