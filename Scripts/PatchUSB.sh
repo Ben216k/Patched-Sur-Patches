@@ -65,6 +65,18 @@ then
     error 'Error 2x1 Patched Sur Patches Not Found'
 fi
 
+echo 'Detecting resource argument...'
+
+if [ ! -d "$1/Patched Sur - Recovery.app" ]
+then
+    echo 'The Resource argument, which provides'
+    echo 'where the Patched Sur post-install and recovery'
+    echo 'apps are, was either not given or is not valid.'
+    error 'Resource argument invalid.'
+fi
+
+RESOURCEDIR="$1"
+
 echo
 
 # MARK: Patch Boot PLIST
@@ -150,12 +162,9 @@ echo
 
 # MARK: The Extra Things
 
-#echo 'Adding Post Install app...'
-
-echo 'Post Install App cannot be added yet.'
-#cp -rf /Volumes/Patched-Sur/.fullApp.app "$INSTALLER"/Patched-Sur.app || error 'Error 2x2: Unable to add post install app.'
-
-#echo 'Added Post Install app'
+echo 'Adding Post Install app...'
+cp -rf "$RESOURCEDIR/Patched Sur.app" "$INSTALLER"/Patched-Sur.app || error 'Error 2x2: Unable to add post install app.'
+echo 'Added Post Install app'
 
 echo
 
@@ -165,7 +174,51 @@ cp -rf $PATCHES/Images/InstallIcon.icns "$INSTALLER"/.VolumeIcon.icns
 
 echo 'Themed (or at least tried to) the installer icon'
 
+echo 'Replacing Boot.efi'
+
+cp -rf "$PATCHES/InstallerPatches/boot.efi" "$INSTALLER/System/Library/CoreServices/boot.efi"
+
+echo 'Replaced Boot.efi'
+
 echo
+
+# MARK: BaseSystem Patching
+
+echo 'Mounting BaseSystem...'
+
+hdiutil attach -owners on "$INSTALLER/BaseSystem/BaseSystem.dmg" -nobrowse -shadow || error 'Error 2x3: Unable to shadow mount BaseSystem.'
+
+cd "/Volumes/macOS Base System/System/Installation/CDIS/Recovery Springboard.app/Contents/Resources"
+
+echo 'Adding new Utilities.plist...'
+cp -rf "$PATCHES/InstallerPatches/Utilities.plist" "Utilities.plist" || error 'Error 2x3: Unable to replace Utilities.plist.'
+
+cd "/Volumes/macOS Base System/Applications"
+echo 'Removing old patcher app (if it\'s there)'
+rm -rf "Patched Sur - Recovery.app"
+echo 'Adding new patcher app...'
+cp -a "$RESOURCES/Patched Sur - Recovery.app" "Patched Sur - Recovery.app" || error 'Error 2x3: Unable to add patcher recovery app.'
+
+cd "/Volumes/macOS Base System/usr/lib"
+echo 'Unzipping Swift frameworks into library'
+unzip "$PATCHES/InstallerPatches/swift.zip" -d . || error 'Error 2x3: Unable to add swift libraries.'
+
+cd "$PATCHES"
+echo "Detacting BaseSystem"
+hdiutil detach "/Volumes/macOS Base System"
+echo "Getting Installer Disk ID"
+DISKID=$(df "$INSTALLER" | tail -1 | sed -e 's@ .*@@')
+echo "Unmounting Installer"
+diskutil unmount force "$DISKID"
+echo "Remounting Installer"
+diskutil mount "$DISKID"
+
+echo "Applying Shadow"
+hdiutil convert -format UDZO -o "$INSTALLER/BaseSystem/BaseSystem2.dmg" "$INSTALLER/BaseSystem/BaseSystem.dmg" -shadow
+echo "Switching BaseSystems"
+cd "$INSTALLER/BaseSystem"
+mv BaseSystem.dmg BaseSystembackup.dmg
+mv BaseSystem2.dmg BaseSystem.dmg
 
 # MARK: Sync and Finish
 
@@ -178,7 +231,7 @@ echo
 echo 'Finished Patching USB!'
 echo 'Now installing SetVars tool...'
 
-# MARK: Install SetVars
+# MARK: - Install SetVars
 
 # This code is from the micropatcher.
 
