@@ -162,11 +162,6 @@ echo
 
 # MARK: The Extra Things
 
-echo 'Adding Post Install app...'
-cp -rf "$RESOURCEDIR/Patched Sur.app" "$INSTALLER"/Patched-Sur.app || error 'Error 2x2: Unable to add post install app.'
-echo 'Added Post Install app'
-
-echo
 
 echo 'Theming the installer icon...'
 
