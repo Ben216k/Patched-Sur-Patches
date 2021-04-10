@@ -283,8 +283,6 @@ then
     fi
 fi
 
-exit 0
-
 # Figure out which kexts to install (or if we want to uninstall)
 
 case $PATCHMODE in
