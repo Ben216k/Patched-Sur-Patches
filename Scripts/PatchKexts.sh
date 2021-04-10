@@ -266,7 +266,7 @@ echo "Checking SIP status"
 if [ "x$RECOVERY" = "xNO" ]
 then
     if [ "x$FORCE" != "xYES" ]; then
-        CSRVAL="`nvram csr-active-config|sed -e 's/^.*    //'`"
+        CSRVAL="`nvram csr-active-config | cut -c 19-`"
         case $CSRVAL in
         w%0[89f]* | %[7f]f%0[89f]*)
             ;;
@@ -282,6 +282,8 @@ then
         esac
     fi
 fi
+
+exit 0
 
 # Figure out which kexts to install (or if we want to uninstall)
 
