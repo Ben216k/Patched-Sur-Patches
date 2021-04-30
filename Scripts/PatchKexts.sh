@@ -70,13 +70,13 @@ if [[ -d "$LPATCHES" ]]; then
 else
     echo "We're booted into full macOS."
     RECOVERY="NO"
-    if [[ -d "/Volumes/Install macOS Big Sur" ]]; then
+    if [[ -d "/Volumes/Install macOS Big Sur/KextPatches" ]]; then
         LPATCHES="/Volumes/Install macOS Big Sur"
-    elif [[ -d "/Volumes/Install macOS Big Sur Beta" ]]; then
+    elif [[ -d "/Volumes/Install macOS Big Sur Beta/KextPatches" ]]; then
         LPATCHES="/Volumes/Install macOS Big Sur Beta"
-    elif [[ -d "/Volumes/Install macOS Beta" ]]; then
+    elif [[ -d "/Volumes/Install macOS Beta/KextPatches" ]]; then
         LPATCHES="/Volumes/Install macOS Beta"
-    elif [[ -d "/usr/local/lib/Patched-Sur-Patches" ]]; then
+    elif [[ -d "/usr/local/lib/Patched-Sur-Patches/KextPatches" ]]; then
         LPATCHES="/usr/local/lib/Patched-Sur-Patches"
     fi
 fi
