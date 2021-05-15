@@ -10,10 +10,7 @@
 # Check what patches to use.
 if [ -z "$PATCHMODE" ]
 then
-    echo "Auto-detecting Mac model..."
-    echo "(Override with --2010, --2011, or --2012)"
     MODEL=`sysctl -n hw.model`
-    echo "Detected model: $MODEL"
     case $MODEL in
     # Macs with CPUs that can't run Big Sur.
     iMac,1|Power*|RackMac*|[0-9][0-9][0-9])
