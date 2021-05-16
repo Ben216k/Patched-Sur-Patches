@@ -46,7 +46,7 @@ then
         echo "(2011):HDA:HD3000:USB:BCM5701:AGC:MCCS:SMBBUNDLE"
         USEBACKLIGHT=`ioreg -l | grep NVArch`
         if USEBACKLIGHT; then
-            echo "(MORE):BACKLIGHT:BACKLIGHTFIXUP:VIT9696"
+            echo "(MORE):BACKLIGHT:FIXUP:VIT9696"
         fi
         USEBUNDLE=`chroot "$VOLUME" ioreg -l | grep Baffin`
         if USEBUNDLE; then
