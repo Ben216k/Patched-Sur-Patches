@@ -61,6 +61,13 @@ backupIfNeeded() {
     fi
 }
 
+backupZIPIfNeeded() {
+    if [[ ! -d "$1"-original.zip ]]; then
+        zip -r "$1"-original.zip "$1"
+    fi
+    rm -rf "$1"
+}
+
 # Rootify script
 [ $UID = 0 ] || exec sudo "$0" "$@"
 
@@ -517,6 +524,52 @@ if [[ ! "$PATCHMODE" == "UNINSTALL" ]]; then
         echo 'Patching com.apple.Boot.plist...'
         pushd "$VOLUME/Library/Preferences/SystemConfiguration" > /dev/null
         cp "$LPATCHES/SystemPatches/com.apple.Boot.plist" com.apple.Boot.plist || echo 'Failed to patch com.apple.Boot.plist, however this is not fatal, so the patcher will not exit.'
+        popd > /dev/null
+    fi
+
+    if [[ "$OPENGL" == "YES" ]]; then
+        echo 'Starting OpenGL Patching... (Thanks ASentientBot, OCLP Team, dosdude1 and others)'
+        pushd "$VOLUME/System/Library/Frameworks" > /dev/null
+
+        echo 'Patching OpenGL.framework...'
+        backupZIPIfNeeded "OpenGL.framework"
+        unzip -q "$LPATCHES/SystemPatches/OpenGL.framework.zip"
+        errorCheck "Failed to patch OpenGL.framework."
+        fixPerms "OpenGL.framework"
+        errorCheck "Failed to fix permissions for OpenGL.framework"
+
+        echo 'Patching IOSurface.framework...'
+        backupZIPIfNeeded "IOSurface.framework"
+        unzip -q "$LPATCHES/SystemPatches/IOSurface.framework.zip"
+        errorCheck "Failed to patch IOSurface.framework."
+        fixPerms "IOSurface.framework"
+        errorCheck "Failed to fix permissions for IOSurface.framework"
+
+        echo 'Patching CoreDisplay.framework...'
+        backupZIPIfNeeded "CoreDisplay.framework"
+        unzip -q "$LPATCHES/SystemPatches/CoreDisplay.framework.zip"
+        errorCheck "Failed to patch CoreDisplay.framework."
+        fixPerms "CoreDisplay.framework"
+        errorCheck "Failed to fix permissions for CoreDisplay.framework"
+
+        popd > /dev/null
+
+        pushd "$VOLUME/System/Library/PrivateFrameworks" > /dev/null
+
+        echo 'Patching SkyLight.framework...'
+        backupZIPIfNeeded "SkyLight.framework"
+        unzip -q "$LPATCHES/SystemPatches/SkyLight.framework.zip"
+        errorCheck "Failed to patch SkyLight.framework."
+        fixPerms "SkyLight.framework"
+        errorCheck "Failed to fix permissions for SkyLight.framework"
+
+        echo 'Patching GPUSupport.framework...'
+        backupZIPIfNeeded "GPUSupport.framework"
+        unzip -q "$LPATCHES/SystemPatches/GPUSupport.framework.zip"
+        errorCheck "Failed to patch GPUSupport.framework."
+        fixPerms "GPUSupport.framework"
+        errorCheck "Failed to fix permissions for GPUSupport.framework"
+
         popd > /dev/null
     fi
 
