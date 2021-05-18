@@ -524,6 +524,11 @@ if [[ ! "$PATCHMODE" == "UNINSTALL" ]]; then
         echo 'Patching com.apple.Boot.plist...'
         pushd "$VOLUME/Library/Preferences/SystemConfiguration" > /dev/null
         cp "$LPATCHES/SystemPatches/com.apple.Boot.plist" com.apple.Boot.plist || echo 'Failed to patch com.apple.Boot.plist, however this is not fatal, so the patcher will not exit.'
+        fixPerms com.apple.Boot.plist || echo 'Failed to correct permissions for com.apple.Boot.plist, however this is not fatal, so the patcher will not exit.'
+        popd > /dev/null
+        pushd "$VOLUME/System/Library/CoreServices" > /dev/null
+        cp "$LPATCHES/SystemPatches/PlatformSupport.plist" PlatformSupport.plist || echo 'Failed to patch PlatformSupport.plist, however this is not fatal, so the patcher will not exit.'
+        fixPerms "PlatformSupport.plist" || echo 'Failed to correct permissions PlatformSupport.plist, however this is not fatal, so the patcher will not exit.'
         popd > /dev/null
     fi
 
