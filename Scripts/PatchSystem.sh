@@ -521,15 +521,37 @@ if [[ ! "$PATCHMODE" == "UNINSTALL" ]]; then
     fi
 
     if [[ "$BOOTPLIST" == "YES" ]]; then
-        echo 'Patching com.apple.Boot.plist...'
-        pushd "$VOLUME/Library/Preferences/SystemConfiguration" > /dev/null
-        cp "$LPATCHES/SystemPatches/com.apple.Boot.plist" com.apple.Boot.plist || echo 'Failed to patch com.apple.Boot.plist, however this is not fatal, so the patcher will not exit.'
-        fixPerms com.apple.Boot.plist || echo 'Failed to correct permissions for com.apple.Boot.plist, however this is not fatal, so the patcher will not exit.'
-        popd > /dev/null
-        pushd "$VOLUME/System/Library/CoreServices" > /dev/null
-        cp "$LPATCHES/SystemPatches/PlatformSupport.plist" PlatformSupport.plist || echo 'Failed to patch PlatformSupport.plist, however this is not fatal, so the patcher will not exit.'
-        fixPerms "PlatformSupport.plist" || echo 'Failed to correct permissions PlatformSupport.plist, however this is not fatal, so the patcher will not exit.'
-        popd > /dev/null
+        if [[ "$RECOVERY" == "YES"]]; then
+            echo "Cannot patch boot plist from recovery due to limitations."
+        else
+            echo 'Patching com.apple.Boot.plist (System Volume)...'
+            pushd "$VOLUME/Library/Preferences/SystemConfiguration" > /dev/null
+            cp "$LPATCHES/SystemPatches/com.apple.Boot.plist" com.apple.Boot.plist || echo 'Failed to patch com.apple.Boot.plist, however this is not fatal, so the patcher will not exit.'
+            fixPerms com.apple.Boot.plist || echo 'Failed to correct permissions for com.apple.Boot.plist, however this is not fatal, so the patcher will not exit.'
+            popd > /dev/null
+            pushd "$VOLUME/System/Library/CoreServices" > /dev/null
+            echo 'Patching PlatformSupport.plist (System Volume)...'
+            cp "$LPATCHES/SystemPatches/PlatformSupport.plist" PlatformSupport.plist || echo 'Failed to patch PlatformSupport.plist, however this is not fatal, so the patcher will not exit.'
+            fixPerms "PlatformSupport.plist" || echo 'Failed to correct permissions PlatformSupport.plist, however this is not fatal, so the patcher will not exit.'
+            popd > /dev/null
+
+            echo 'Making sure the Premount volume is mounted for Boot.plist patches...'
+            PREMOUNTID=`diskutil list | grep Preboot | head -n 1 | cut -c 71-`
+            diskutil mount "$PREMOUNTID"
+            if [[ "$VOLUME" = "/System/Volumes/Update/mnt1" ]]; then; APFSID=`diskutil info / | grep "APFS Volume Group" | cut -c 31-`
+            else APFSID=`diskutil info $VOLUME | grep "APFS Volume Group" | cut -c 31-`; fi
+
+            pushd "/System/Volumes/Preboot/$APFSID/Library/Preferences/SystemConfiguration" > /dev/null
+            echo 'Patching com.apple.Boot.plist (Preboot Volume)...'
+            cp -X "$LPATCHES/SystemPatches/com.apple.Boot.plist" com.apple.Boot.plist || echo 'Failed to patch com.apple.Boot.plist, however this is not fatal, so the patcher will not exit.'
+            fixPerms com.apple.Boot.plist || echo 'Failed to correct permissions for com.apple.Boot.plist, however this is not fatal, so the patcher will not exit.'
+            popd > /dev/null
+            pushd "/System/Volumes/Preboot/$APFSID/Library/Preferences/SystemConfiguration" > /dev/null
+            echo 'Patching PlatformSupport.plist (Preboot Volume)...'
+            cp -X "$LPATCHES/SystemPatches/PlatformSupport.plist" PlatformSupport.plist || echo 'Failed to patch PlatformSupport.plist, however this is not fatal, so the patcher will not exit.'
+            fixPerms "PlatformSupport.plist" || echo 'Failed to correct permissions PlatformSupport.plist, however this is not fatal, so the patcher will not exit.'
+            popd > /dev/null
+        fi
     fi
 
     if [[ "$OPENGL" == "YES" ]]; then
