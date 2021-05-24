@@ -598,6 +598,17 @@ if [[ ! "$PATCHMODE" == "UNINSTALL" ]]; then
         errorCheck "Failed to fix permissions for GPUSupport.framework"
 
         popd > /dev/null
+        
+        pushd "$VOLUME/System/Library/Extensions" > /dev/null
+
+        echo 'Patching IOSurface.kext...'
+        backupIfNeeded "IOSurface.kext"
+        unzip -q "$LPATCHES/KextPatches/IOSurface.kext.zip"
+        errorCheck "Failed to patch IOSurface.kext."
+        fixPerms "IOSurface.kext"
+        errorCheck "Failed to fix permissions for IOSurface.kext"
+
+        popd > /dev/null
     fi
 
     # MARK: Rebuild Kernel Collection 
