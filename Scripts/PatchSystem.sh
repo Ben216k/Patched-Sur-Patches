@@ -606,6 +606,7 @@ if [[ ! "$PATCHMODE" == "UNINSTALL" ]]; then
 
         echo 'Patching IOSurface.kext...'
         backupIfNeeded "IOSurface.kext"
+        rm -rf "__MACOSX"
         unzip -q "$LPATCHES/KextPatches/IOSurface.kext.zip"
         errorCheck "Failed to patch IOSurface.kext."
         fixPerms "IOSurface.kext"
