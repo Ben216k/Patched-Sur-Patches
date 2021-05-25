@@ -521,7 +521,7 @@ if [[ ! "$PATCHMODE" == "UNINSTALL" ]]; then
     fi
 
     if [[ "$BOOTPLIST" == "YES" ]]; then
-        if [[ "$RECOVERY" == "YES"]]; then
+        if [[ "$RECOVERY" == "YES" ]]; then
             echo "Cannot patch boot plist from recovery due to limitations."
         else
             echo 'Patching com.apple.Boot.plist (System Volume)...'
@@ -538,8 +538,11 @@ if [[ ! "$PATCHMODE" == "UNINSTALL" ]]; then
             echo 'Making sure the Premount volume is mounted for Boot.plist patches...'
             PREMOUNTID=`diskutil list | grep Preboot | head -n 1 | cut -c 71-`
             diskutil mount "$PREMOUNTID"
-            if [[ "$VOLUME" = "/System/Volumes/Update/mnt1" ]]; then; APFSID=`diskutil info / | grep "APFS Volume Group" | cut -c 31-`
-            else APFSID=`diskutil info $VOLUME | grep "APFS Volume Group" | cut -c 31-`; fi
+            if [[ "$VOLUME" == "/System/Volumes/Update/mnt1" ]]; then
+                APFSID=`diskutil info / | grep "APFS Volume Group" | cut -c 31-`
+            else
+                APFSID=`diskutil info $VOLUME | grep "APFS Volume Group" | cut -c 31-`
+            fi
 
             pushd "/System/Volumes/Preboot/$APFSID/Library/Preferences/SystemConfiguration" > /dev/null
             echo 'Patching com.apple.Boot.plist (Preboot Volume)...'
