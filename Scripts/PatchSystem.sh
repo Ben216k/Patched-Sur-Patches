@@ -561,6 +561,65 @@ if [[ ! "$PATCHMODE" == "UNINSTALL" ]]; then
         echo 'Starting OpenGL Patching... (Thanks ASentientBot, OCLP Team, dosdude1 and others)'
         pushd "$VOLUME/System/Library/Frameworks" > /dev/null
 
+        ISAMD=`chroot "$VOLUME" ioreg -l | grep Baffin`
+        if [[ "$ISAMD" ]]; then
+            echo 'Removing AMD bad kexts...'
+            rm -rf "AMDRadeonX4000.kext" \
+                "AMDRadeonX4000HWServices.kext" \
+                "AMDRadeonX5000.kext" \
+                "AMDRadeonX5000HWServices.kext" \
+                "AMDRadeonX6000.kext"
+            rm -rf "AMDRadeonX6000Framebuffer.kext" \
+                "AMDRadeonX6000HWServices.kext" \
+                "AMD7000Controller.kext" \
+                "AMD8000Controller.kext" \
+                "AMD9000Controller.kext"
+            rm -rf "AMD9500Controller.kext" \
+                "AMD10000Controller.kext" \
+                "AppleIntelBDWGraphics.kext" \
+                "AppleIntelBDWGraphicsFramebuffer.kext" \
+                "AppleIntelCFLGraphicsFramebuffer.kext"
+            rm -rf "AppleIntelHD4000Graphics.kext" \
+                "AppleIntelHD5000Graphics.kext" \
+                "AppleIntelICLGraphics.kext" \
+                "AppleIntelICLLPGraphicsFramebuffer.kext" \
+                "AppleIntelKBLGraphics.kext"
+            rm -rf "AppleIntelKBLGraphicsFramebuffer.kext" \
+                "AppleIntelSKLGraphics.kext" \
+                "AppleIntelSKLGraphicsFramebuffer.kext" \
+                "AppleIntelFramebufferAzul.kext" \
+                "AppleIntelFramebufferCapri.kext"
+            rm -rf "AppleParavirtGPU.kext" \
+                "GeForce.kext" \
+                "IOGPUFamily.kext"
+        else
+            echo 'Removing Nvidia/Intel bad kexts...'
+            rm -rf "AMDRadeonX4000.kext" \
+                "AMDRadeonX4000HWServices.kext" \
+                "AMDRadeonX5000.kext" \
+                "AMDRadeonX5000HWServices.kext" \
+                "AMDRadeonX6000.kext"
+            rm -rf "AMDRadeonX6000Framebuffer.kext" \
+                "AMDRadeonX6000HWServices.kext" \
+                "AppleIntelBDWGraphics.kext" \
+                "AppleIntelBDWGraphicsFramebuffer.kext" \
+                "AppleIntelCFLGraphicsFramebuffer.kext"
+            rm -rf "AppleIntelHD4000Graphics.kext" \
+                "AppleIntelHD5000Graphics.kext" \
+                "AppleIntelICLGraphics.kext" \
+                "AppleIntelICLLPGraphicsFramebuffer.kext" \
+                "AppleIntelKBLGraphics.kext"
+            rm -rf "AppleIntelKBLGraphicsFramebuffer.kext" \
+                "AppleIntelSKLGraphics.kext" \
+                "AppleIntelSKLGraphicsFramebuffer.kext" \
+                "AppleIntelFramebufferAzul.kext" \
+                "AppleIntelFramebufferCapri.kext"
+            rm -rf "AppleParavirtGPU.kext" \
+                "GeForce.kext" \
+                "IOAcceleratorFamily2.kext" \
+                "IOGPUFamily.kext"
+        fi
+
         echo 'Patching OpenGL.framework...'
         backupZIPIfNeeded "OpenGL.framework"
         unzip -q "$LPATCHES/SystemPatches/OpenGL.framework.zip"
@@ -611,6 +670,30 @@ if [[ ! "$PATCHMODE" == "UNINSTALL" ]]; then
         errorCheck "Failed to patch IOSurface.kext."
         fixPerms "IOSurface.kext"
         errorCheck "Failed to fix permissions for IOSurface.kext"
+
+        echo 'Patching IOAcceleratorFamily2.kext...'
+        backupIfNeeded "IOAcceleratorFamily2.kext"
+        rm -rf "__MACOSX"
+        unzip -q "$LPATCHES/KextPatches/IOAcceleratorFamily2.kext.zip"
+        errorCheck "Failed to patch IOAcceleratorFamily2.kext."
+        fixPerms "IOAcceleratorFamily2.kext"
+        errorCheck "Failed to fix permissions for IOAcceleratorFamily2.kext"
+
+        echo 'Patching IOGraphicsFamily.kext...'
+        backupIfNeeded "IOGraphicsFamily.kext"
+        rm -rf "__MACOSX"
+        unzip -q "$LPATCHES/KextPatches/IOGraphicsFamily.kext.zip"
+        errorCheck "Failed to patch IOGraphicsFamily.kext."
+        fixPerms "IOGraphicsFamily.kext"
+        errorCheck "Failed to fix permissions for IOGraphicsFamily.kext"
+
+        echo 'Patching IONDRVSupport.kext...'
+        backupIfNeeded "IONDRVSupport.kext"
+        rm -rf "__MACOSX"
+        unzip -q "$LPATCHES/KextPatches/IONDRVSupport.kext.zip"
+        errorCheck "Failed to patch IONDRVSupport.kext."
+        fixPerms "IONDRVSupport.kext"
+        errorCheck "Failed to fix permissions for IONDRVSupport.kext"
 
         popd > /dev/null
     fi

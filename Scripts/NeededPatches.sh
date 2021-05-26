@@ -45,11 +45,11 @@ then
     iMac12,?)
         echo "(2011):HDA:HD3000:USB:BCM5701:AGC:MCCS:SMBBUNDLE"
         USEBACKLIGHT=`ioreg -l | grep NVArch`
-        if USEBACKLIGHT; then
+        if [ "$USEBACKLIGHT" ]; then
             echo "(MORE):BACKLIGHT:FIXUP:VIT9696"
         fi
         USEBUNDLE=`chroot "$VOLUME" ioreg -l | grep Baffin`
-        if USEBUNDLE; then
+        if [ "$USEBUNDLE" ]; then
             echo "(MORE):SMBKEXT"
         fi 
         INSTALL_IMAC2011="YES"
