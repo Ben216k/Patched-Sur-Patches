@@ -568,56 +568,56 @@ if [[ ! "$PATCHMODE" == "UNINSTALL" ]]; then
                 "AMDRadeonX4000HWServices.kext" \
                 "AMDRadeonX5000.kext" \
                 "AMDRadeonX5000HWServices.kext" \
-                "AMDRadeonX6000.kext"
+                "AMDRadeonX6000.kext" || error "Failed to delete bad kexts (1)."
             rm -rf "AMDRadeonX6000Framebuffer.kext" \
                 "AMDRadeonX6000HWServices.kext" \
                 "AMD7000Controller.kext" \
                 "AMD8000Controller.kext" \
-                "AMD9000Controller.kext"
+                "AMD9000Controller.kext" || error "Failed to delete bad kexts (2)."
             rm -rf "AMD9500Controller.kext" \
                 "AMD10000Controller.kext" \
                 "AppleIntelBDWGraphics.kext" \
                 "AppleIntelBDWGraphicsFramebuffer.kext" \
-                "AppleIntelCFLGraphicsFramebuffer.kext"
+                "AppleIntelCFLGraphicsFramebuffer.kext" || error "Failed to delete bad kexts (3)."
             rm -rf "AppleIntelHD4000Graphics.kext" \
                 "AppleIntelHD5000Graphics.kext" \
                 "AppleIntelICLGraphics.kext" \
                 "AppleIntelICLLPGraphicsFramebuffer.kext" \
-                "AppleIntelKBLGraphics.kext"
+                "AppleIntelKBLGraphics.kext" || error "Failed to delete bad kexts (4)."
             rm -rf "AppleIntelKBLGraphicsFramebuffer.kext" \
                 "AppleIntelSKLGraphics.kext" \
                 "AppleIntelSKLGraphicsFramebuffer.kext" \
                 "AppleIntelFramebufferAzul.kext" \
-                "AppleIntelFramebufferCapri.kext"
+                "AppleIntelFramebufferCapri.kext" || error "Failed to delete bad kexts (5)."
             rm -rf "AppleParavirtGPU.kext" \
                 "GeForce.kext" \
-                "IOGPUFamily.kext"
+                "IOGPUFamily.kext" || error "Failed to delete bad kexts (6)."
         else
             echo 'Removing Nvidia/Intel bad kexts...'
             rm -rf "AMDRadeonX4000.kext" \
                 "AMDRadeonX4000HWServices.kext" \
                 "AMDRadeonX5000.kext" \
                 "AMDRadeonX5000HWServices.kext" \
-                "AMDRadeonX6000.kext"
+                "AMDRadeonX6000.kext" || error "Failed to delete bad kexts (1)."
             rm -rf "AMDRadeonX6000Framebuffer.kext" \
                 "AMDRadeonX6000HWServices.kext" \
                 "AppleIntelBDWGraphics.kext" \
                 "AppleIntelBDWGraphicsFramebuffer.kext" \
-                "AppleIntelCFLGraphicsFramebuffer.kext"
+                "AppleIntelCFLGraphicsFramebuffer.kext" || error "Failed to delete bad kexts. (2)"
             rm -rf "AppleIntelHD4000Graphics.kext" \
                 "AppleIntelHD5000Graphics.kext" \
                 "AppleIntelICLGraphics.kext" \
                 "AppleIntelICLLPGraphicsFramebuffer.kext" \
-                "AppleIntelKBLGraphics.kext"
+                "AppleIntelKBLGraphics.kext" || error "Failed to delete bad kexts. (3)"
             rm -rf "AppleIntelKBLGraphicsFramebuffer.kext" \
                 "AppleIntelSKLGraphics.kext" \
                 "AppleIntelSKLGraphicsFramebuffer.kext" \
                 "AppleIntelFramebufferAzul.kext" \
-                "AppleIntelFramebufferCapri.kext"
+                "AppleIntelFramebufferCapri.kext" || error "Failed to delete bad kexts. (4)"
             rm -rf "AppleParavirtGPU.kext" \
                 "GeForce.kext" \
                 "IOAcceleratorFamily2.kext" \
-                "IOGPUFamily.kext"
+                "IOGPUFamily.kext" || error "Failed to delete bad kexts. (5)"
         fi
 
         echo 'Patching OpenGL.framework...'
