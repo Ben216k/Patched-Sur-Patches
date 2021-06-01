@@ -7,73 +7,69 @@
 #  Created by Ben Sova on 5/15/21
 #
 
+exitIfUnknown() {
+    if [[ "$1" == "--rerun" ]]; then
+        echo "Failed to find Needed Patches, this Mac probably doesn't support the patcher (or just doesn't need it)." 1>&2
+        exit 1
+    fi
+}
+
 # Check what patches to use.
 if [ -z "$PATCHMODE" ]
 then
     MODEL=`sysctl -n hw.model`
     case $MODEL in
-    # Macs with CPUs that can't run Big Sur.
-    iMac,1|Power*|RackMac*|[0-9][0-9][0-9])
-        echo "UNKNOWN"
-        ;;
-    MacBookPro1,?|MacBook1,1|Macmini1,1)
-        echo "UNKNOWN"
-        ;;
-    MacBook[23],1|Macmini2,1|MacPro[12],1|MacBookAir1,1|MacBookPro[23],?|Xserve1,?)
-        echo "UNKNOWN"
-        ;;
-    MacBookPro6,?)
-        echo "UNKNOWN"
-        ;;
     # Macs that support this patcher.
-    MacBook[4-7],?|Macmini[34],1|MacBookAir[23],?|MacBookPro[457],?|MacPro3,1)
-        echo "(2010):HDA:HD3000:USB:GFTESLA:NVNET:BCM5701:TELEMETRY"
-        ;;
-    iMac[0-9],?|iMac10,?)
-        echo "(2010):HDA:HD3000:USB:GFTESLA:NVNET:BCM5701:TELEMETRY"
+    MacBook[4-7],?|Macmini[34],1|MacBookAir[23],?|MacBookPro[457],?|MacPro3,1|iMac[0-9],?|iMac10,?)
+        echo "(2010):HDA:HD3000:USB:GFTESLA:NVNET:BCM5701:TELEMETRY:BOOTPLIST"
+        HDA="--hda" HD3000="--hd3000" USB="--legacyUSB" GFTESLA="gfTesla" NVNET="--nvNet" BCM5701="--bcm5701" TELEMETRY="--telemetry" BOOTPLIST="--bootPlist"
         ;;
     Macmini5,?|MacBookAir4,?|MacBookPro8,?)
-        echo "(2011):HDA:HD3000:USB:BCM5701"
+        echo "(2011):HDA:HD3000:USB:BCM5701:BOOTPLIST"
+        HDA="--hda" HD3000="--hd3000" USB="--legacyUSB" BCM5701="--bcm5701" BOOTPLIST="--bootPlist"
         ;;
     iMac11,?)
-        echo "(IMAC):HDA:USB:BCM5701:AGC"
+        echo "(IMAC):HDA:USB:BCM5701:AGC:BOOTPLIST"
+        HDA="--hda" USB="--legacyUSB" BCM5701="--bcm5701" AGC="--agc" BOOTPLIST="--bootPlist"
         USEBACKLIGHT=`ioreg -l | grep NVArch`
         if USEBACKLIGHT; then
             echo "(MORE):BACKLIGHT"
+            BACKLIGHT="--backlight"
         fi
         ;;
     iMac12,?)
-        echo "(2011):HDA:HD3000:USB:BCM5701:AGC:MCCS:SMBBUNDLE"
+        echo "(2011):HDA:HD3000:USB:BCM5701:AGC:MCCS:SMBBUNDLE:BOOTPLIST"
+        HDA="--hda" HD3000="--hd3000" USB="--legacyUSB" BCM5701="--bcm5701" AGC="--agc" MCCS="--mccs" BOOTPLIST="--bootPlist" SMB="--smb=bundle"
         USEBACKLIGHT=`ioreg -l | grep NVArch`
         if [ "$USEBACKLIGHT" ]; then
             echo "(MORE):BACKLIGHT:FIXUP:VIT9696"
+            BACKLIGHT="--backlight" FIXUP="--backlightFixup" VIT9696="--vit9696"
         fi
         USEBUNDLE=`chroot "$VOLUME" ioreg -l | grep Baffin`
         if [ "$USEBUNDLE" ]; then
             echo "(MORE):SMBKEXT"
-        fi 
-        INSTALL_IMAC2011="YES"
+            SMB="--smb=kext"
+        fi
         ;;
-    Macmini6,?|MacBookAir5,?|MacBookPro9,?|MacBookPro10,?|iMac13,?)
-        echo "(2012)"
+    Macmini6,?|MacBookAir5,?|MacBookPro9,?|MacBookPro10,?|iMac13,?|MacPro[45],1|iMac14,[123])
+        echo "(2012):BOOTPLIST"
+        BOOTPLIST="--bootPlist"
         ;;
-    MacPro[45],1)
-        echo "(2012)"
-        ;;
-    iMac14,[123])
-        echo "NONE"
-        ;;
-    # Big Sur supported Macs.
-    iMac14,4|iMac1[5-9],?|iMac[2-9][0-9],?|iMacPro*|MacPro[6-9],?|Macmini[7-9],?|MacBook[89],1|MacBook[1-9][0-9],?|MacBookAir[6-9],?|MacBookAir[1-9][0-9],?|MacBookPro1[1-9],?)
-        echo "UNKNOWN"
-        ;;
+    # Everything else
     *)
         echo "UNKNOWN"
-        exit 1
+        exitIfUnknown
         ;;
     esac
 fi
 
 if [ -z "`ioreg -l | fgrep 802.11 | fgrep ac`" ]; then
     echo "(MORE):WIFI"
+    WIFI="--wifi=mojave-hybird"
 fi
+
+if [[ "$1" == "--rerun" ]]; then
+        echo "Running PatchSystem.sh..."
+        "$(dirname "$0")/PatchSystem.sh" $WIFI $HDA $HD3000 $USB $GFTESLA $NVNET $BCM5701 $TELEMETRY $AGC $MCCS $SMB $BACKLIGHT $BACKLIGHTFIXUP $VIT9696 $BOOTPLIST
+        exit $?
+    fi

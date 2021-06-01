@@ -13,6 +13,12 @@
 #  on unsupported Macs
 #
 
+if [[ "$1" == "--detect" ]]; then
+    echo "Set to detect patches, restarting PatchSystem with NeededPatches..."
+    "$(dirname "$0")/NeededPatches.sh" --rerun $2
+    exit $?
+fi
+
 # MARK: Functions for Later
 
 # Error out better for interfacing with the patcher.
@@ -133,7 +139,6 @@ while [[ $1 == -* ]]; do
             echo '[CONFIG] Unpatching system.'
             echo 'Note: This may not fully (or correctly) remove all patches.'
             error 'Uninstalling patches is not supported yet.'
-            PATCHMODE="UNINSTALL"
             ;;
         --wifi=mojaveHybrid)
             echo '[CONFIG] Will use Mojave-Hybrid WiFi patch.'
@@ -720,6 +725,59 @@ if [[ ! "$PATCHMODE" == "UNINSTALL" ]]; then
     errorCheck 'Failed to rebuild kernel system collection.'
 
     echo "Finished rebuilding!"
+else
+    # MARK: Unpatch Kexts
+
+    pushd "$VOLUME/System/Library/KernelCollections" > /dev/null
+
+    BACKUP_FILE_BASE="KernelCollections-$SVPL_BUILD.tar"
+    BACKUP_FILE="$BACKUP_FILE_BASE".lz4
+
+    if [ ! -e "$BACKUP_FILE" ]
+    then
+        error "Failed to find kernel collection backup at $(pwd)/$BACKUP_FILE"
+    fi
+    
+    echo "Restoring KernelCollections backup from: $(pwd)/$BACKUP_FILE"
+    rm -rf *.kc
+    "$VOLUME/usr/bin/compression_tool" -decode < "$BACKUP_FILE" | tar xpv
+    errorCheck 'Failed to unpatch the KernelCollection'
+    rm -rf "$BACKUP_FILE"
+    
+    popd > /dev/null
+    
+    echo "Unpatching kexts"
+    pushd "$VOLUME/System/Library/Extensions" > /dev/null
+    restoreOriginals
+
+    pushd IONetworkingFamily.kext/Contents/Plugins > /dev/null
+    restoreOriginals
+    popd > /dev/null
+    
+    if [ -f AppleGraphicsControl.kext.zip ]
+    then
+        echo 'Restoring patched AppleGraphicsControl extension'
+        rm -rf AppleGraphicsControl.kext
+        unzip -q AppleGraphicsControl.kext.zip
+        rm AppleGraphicsControl.kext.zip
+    fi
+    rm -rf AppleGraphicsControl.kext
+    echo 'Unpatching IntelHD3000.kexts'
+    rm -rf AppleIntelHD3000* AppleIntelSNB*
+    echo 'Unpatching LegacyUSBInjector.kext'
+    rm -rf LegacyUSBInjector.kext
+    echo 'Unpatching nvenet.kext'
+    rm -rf IONetworkingFamily.kext/Contents/Plugins/nvenet.kext
+    echo 'Unpatching Tesla kext...'
+    rm -rf *Tesla*
+    echo 'Removing @vit9696 Whatevergreen.kext and Lilu.kext'
+    rm -rf Whatevergreen.kext Lilu.kext
+    echo 'Removing iMac AppleBacklightFixup'
+    rm -rf AppleBacklightFixup.kext
+    echo 'Reactivating telemetry plugin'
+    mv -f "$VOLUME/System/Library/UserEventPlugins/com.apple.telemetry.plugin.disabled" "$VOLUME/System/Library/UserEventPlugins/com.apple.telemetry.plugin"
+    
+    popd > /dev/null
 fi
 
 # MARK: Finish Up

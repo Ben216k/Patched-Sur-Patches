@@ -11,6 +11,7 @@
 #  on unsupported Macs
 #
 
+echo "Warning running Patch Kexts legacy! (PPS not MP)"
 
 # MARK: Functions for Later
 
