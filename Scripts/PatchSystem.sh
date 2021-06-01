@@ -564,61 +564,65 @@ if [[ ! "$PATCHMODE" == "UNINSTALL" ]]; then
         ISAMD=`chroot "$VOLUME" ioreg -l | grep Baffin`
         if [[ "$ISAMD" ]]; then
             echo 'Removing AMD bad kexts...'
-            rm -rf "AMDRadeonX4000.kext" \
+            rm -R "AMDRadeonX4000.kext" \
                 "AMDRadeonX4000HWServices.kext" \
                 "AMDRadeonX5000.kext" \
                 "AMDRadeonX5000HWServices.kext" \
                 "AMDRadeonX6000.kext" || error "Failed to delete bad kexts (1)."
-            rm -rf "AMDRadeonX6000Framebuffer.kext" \
+            rm -R "AMDRadeonX6000Framebuffer.kext" \
                 "AMDRadeonX6000HWServices.kext" \
                 "AMD7000Controller.kext" \
                 "AMD8000Controller.kext" \
                 "AMD9000Controller.kext" || error "Failed to delete bad kexts (2)."
-            rm -rf "AMD9500Controller.kext" \
+            rm -R "AMD9500Controller.kext" \
                 "AMD10000Controller.kext" \
                 "AppleIntelBDWGraphics.kext" \
                 "AppleIntelBDWGraphicsFramebuffer.kext" \
                 "AppleIntelCFLGraphicsFramebuffer.kext" || error "Failed to delete bad kexts (3)."
-            rm -rf "AppleIntelHD4000Graphics.kext" \
+            rm -R "AppleIntelHD4000Graphics.kext" \
                 "AppleIntelHD5000Graphics.kext" \
                 "AppleIntelICLGraphics.kext" \
                 "AppleIntelICLLPGraphicsFramebuffer.kext" \
                 "AppleIntelKBLGraphics.kext" || error "Failed to delete bad kexts (4)."
-            rm -rf "AppleIntelKBLGraphicsFramebuffer.kext" \
+            rm -R "AppleIntelKBLGraphicsFramebuffer.kext" \
                 "AppleIntelSKLGraphics.kext" \
                 "AppleIntelSKLGraphicsFramebuffer.kext" \
                 "AppleIntelFramebufferAzul.kext" \
                 "AppleIntelFramebufferCapri.kext" || error "Failed to delete bad kexts (5)."
-            rm -rf "AppleParavirtGPU.kext" \
+            rm -R "AppleParavirtGPU.kext" \
                 "GeForce.kext" \
                 "IOGPUFamily.kext" || error "Failed to delete bad kexts (6)."
         else
             echo 'Removing Nvidia/Intel bad kexts...'
-            rm -rf "AMDRadeonX4000.kext" \
+            rm -R "AMDRadeonX4000.kext" \
                 "AMDRadeonX4000HWServices.kext" \
                 "AMDRadeonX5000.kext" \
                 "AMDRadeonX5000HWServices.kext" \
                 "AMDRadeonX6000.kext" || error "Failed to delete bad kexts (1)."
-            rm -rf "AMDRadeonX6000Framebuffer.kext" \
+            rm -R "AMDRadeonX6000Framebuffer.kext" \
                 "AMDRadeonX6000HWServices.kext" \
                 "AppleIntelBDWGraphics.kext" \
                 "AppleIntelBDWGraphicsFramebuffer.kext" \
                 "AppleIntelCFLGraphicsFramebuffer.kext" || error "Failed to delete bad kexts. (2)"
-            rm -rf "AppleIntelHD4000Graphics.kext" \
+            rm -R "AppleIntelHD4000Graphics.kext" \
                 "AppleIntelHD5000Graphics.kext" \
                 "AppleIntelICLGraphics.kext" \
                 "AppleIntelICLLPGraphicsFramebuffer.kext" \
                 "AppleIntelKBLGraphics.kext" || error "Failed to delete bad kexts. (3)"
-            rm -rf "AppleIntelKBLGraphicsFramebuffer.kext" \
+            rm -R "AppleIntelKBLGraphicsFramebuffer.kext" \
                 "AppleIntelSKLGraphics.kext" \
                 "AppleIntelSKLGraphicsFramebuffer.kext" \
                 "AppleIntelFramebufferAzul.kext" \
                 "AppleIntelFramebufferCapri.kext" || error "Failed to delete bad kexts. (4)"
-            rm -rf "AppleParavirtGPU.kext" \
+            rm -R "AppleParavirtGPU.kext" \
                 "GeForce.kext" \
                 "IOAcceleratorFamily2.kext" \
                 "IOGPUFamily.kext" || error "Failed to delete bad kexts. (5)"
         fi
+
+        echo 'Checking deleted kexts...'
+        [[ ! -d "AppleIntelHD4000Graphics.kext" ]] || error "Removing bad kexts failed but claimed to work."
+
 
         echo 'Patching OpenGL.framework...'
         backupZIPIfNeeded "OpenGL.framework"
