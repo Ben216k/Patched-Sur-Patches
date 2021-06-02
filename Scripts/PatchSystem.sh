@@ -220,6 +220,9 @@ while [[ $1 == -* ]]; do
             echo "[CONFIG] Will patch com.apple.Boot.plist"
             BOOTPLIST="YES"
             ;;
+        --noRebuild)
+            echo "Will patch without rebuilding the kernel collection."
+            NOREBUILD="YES"
         *)
             echo "Unknown option, ignoring. $1"
             ;;
@@ -709,22 +712,24 @@ if [[ ! "$PATCHMODE" == "UNINSTALL" ]]; then
 
     # MARK: Rebuild Kernel Collection 
 
-    echo 'Rebuilding boot collection...'
-    chroot "$VOLUME" kmutil create -n boot \
-        --kernel /System/Library/Kernels/kernel \
-        --variant-suffix release --volume-root / $BUNDLEPATH \
-        --boot-path /System/Library/KernelCollections/BootKernelExtensions.kc
-    errorCheck 'Failed to rebuild kernel boot collection.'
+    if [[ ! $NOREBUILD == "YES" ]]; then
+        echo 'Rebuilding boot collection...'
+        chroot "$VOLUME" kmutil create -n boot \
+            --kernel /System/Library/Kernels/kernel \
+            --variant-suffix release --volume-root / $BUNDLEPATH \
+            --boot-path /System/Library/KernelCollections/BootKernelExtensions.kc
+        errorCheck 'Failed to rebuild kernel boot collection.'
 
-    echo 'Rebuilding system collection...'
-    chroot "$VOLUME" kmutil create -n sys \
-        --kernel /System/Library/Kernels/kernel \
-        --variant-suffix release --volume-root / \
-        --system-path /System/Library/KernelCollections/SystemKernelExtensions.kc \
-        --boot-path /System/Library/KernelCollections/BootKernelExtensions.kc
-    errorCheck 'Failed to rebuild kernel system collection.'
+        echo 'Rebuilding system collection...'
+        chroot "$VOLUME" kmutil create -n sys \
+            --kernel /System/Library/Kernels/kernel \
+            --variant-suffix release --volume-root / \
+            --system-path /System/Library/KernelCollections/SystemKernelExtensions.kc \
+            --boot-path /System/Library/KernelCollections/BootKernelExtensions.kc
+        errorCheck 'Failed to rebuild kernel system collection.'
 
-    echo "Finished rebuilding!"
+        echo "Finished rebuilding!"
+    fi
 else
     # MARK: Unpatch Kexts
 
@@ -780,14 +785,16 @@ else
 fi
 
 # MARK: Finish Up
-
-echo 'Running kcditto...'
-"$VOLUME/usr/sbin/kcditto"
-errorCheck 'kcditto failed.'
+if [[ ! $NOREBUILD == "YES" ]]; then
+    echo 'Running kcditto...'
+    "$VOLUME/usr/sbin/kcditto"
+    errorCheck 'kcditto failed.'
+fi
 
 echo 'Reblessing volume...'
 bless --folder "$VOLUME"/System/Library/CoreServices --bootefi --create-snapshot --setBoot
 errorCheck bless
+
 
 if [[ "$VOLUME" = "/System/Volumes/Update/mnt1" ]]; then
     echo "Unmounting underlying volume..."
