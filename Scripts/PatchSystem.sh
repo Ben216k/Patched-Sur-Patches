@@ -773,6 +773,7 @@ else
     echo 'Removing iMac AppleBacklightFixup'
     rm -rf AppleBacklightFixup.kext
     echo 'Reactivating telemetry plugin'
+    echo 'WARNING: OpenGL will not be unpatched.'
     mv -f "$VOLUME/System/Library/UserEventPlugins/com.apple.telemetry.plugin.disabled" "$VOLUME/System/Library/UserEventPlugins/com.apple.telemetry.plugin"
     
     popd > /dev/null
