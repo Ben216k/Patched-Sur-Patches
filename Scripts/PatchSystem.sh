@@ -754,14 +754,12 @@ else
     restoreOriginals
     popd > /dev/null
     
-    if [ -f AppleGraphicsControl.kext.zip ]
-    then
+    if [[ -f AppleGraphicsControl.kext.zip ]]; then
         echo 'Restoring patched AppleGraphicsControl extension'
         rm -rf AppleGraphicsControl.kext
         unzip -q AppleGraphicsControl.kext.zip
         rm AppleGraphicsControl.kext.zip
     fi
-    rm -rf AppleGraphicsControl.kext
     echo 'Unpatching IntelHD3000.kexts'
     rm -rf AppleIntelHD3000* AppleIntelSNB*
     echo 'Unpatching LegacyUSBInjector.kext'
