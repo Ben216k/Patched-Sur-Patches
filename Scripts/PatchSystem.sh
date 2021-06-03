@@ -562,6 +562,15 @@ if [[ ! "$PATCHMODE" == "UNINSTALL" ]]; then
             cp -X "$LPATCHES/SystemPatches/PlatformSupport.plist" PlatformSupport.plist || echo 'Failed to patch PlatformSupport.plist, however this is not fatal, so the patcher will not exit.'
             fixPerms "PlatformSupport.plist" || echo 'Failed to correct permissions PlatformSupport.plist, however this is not fatal, so the patcher will not exit.'
             popd > /dev/null
+
+            echo 'Enabling the patcher daemon since this will be needed for bugging the user after an NVRAM reset.'
+            pushd "/Library/LaunchAgents" > /dev/null
+            launchctl unload /Library/LaunchAgents/u-bensova.Patched-Sur.Daemon.plist
+            rm -rf u-bensova.Patched-Sur.Daemon.plist
+            cp "$LPATCHES/SystemPatches/u-bensova.Patched-Sur.Daemon.plist" u-bensova.Patched-Sur.Daemon.plist || echo 'Failed to add patcher daemon, not important, not exiting.'
+            launchctl load -w /Library/LaunchAgents/u-bensova.Patched-Sur.Daemon.plist || echo 'Failed to enable patcher daemon, not important, not exiting.'
+            launchctl enable system/u-bensova.Patched-Sur.Daemon
+            popd > /dev/null
         fi
     fi
 
