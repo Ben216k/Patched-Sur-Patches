@@ -101,7 +101,8 @@ echo
 
 echo 'Adding Backup Kexts...'
 
-cp -rf "$PATCHES/KextPatches" "$INSTALLER" || error 'Error 2x2 Unable to add backup kexts to installer.'
+cp -rf "$PATCHES/KextPatches" "$INSTALLER" || error 'Error 2x2 Unable to add patched kexts to installer.'
+cp -rf "$PATCHES/SystemPatches" "$INSTALLER" || error 'Error 2x2 Unable to add system patches to installer.'
 
 echo 'Added Backup Kexts Successfully.'
 echo
