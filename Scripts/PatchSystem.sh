@@ -223,6 +223,7 @@ while [[ $1 == -* ]]; do
         --noRebuild)
             echo "Will patch without rebuilding the kernel collection."
             NOREBUILD="YES"
+            ;;
         *)
             echo "Unknown option, ignoring. $1"
             ;;
