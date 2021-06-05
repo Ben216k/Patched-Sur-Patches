@@ -286,6 +286,10 @@ fi
 # MARK: Preparing for Patching
 
 echo
+
+echo 'Unmounting underlying volume just incase.'
+umount "/System/Volumes/Update/mnt1" || diskutil unmount force "/System/Volumes/Update/mnt1"
+
 echo "Remounting Volume..."
 
 if [[ "$VOLUME" = "/" ]]; then
