@@ -74,6 +74,14 @@ backupZIPIfNeeded() {
     rm -rf "$1"
 }
 
+deleteIfNeeded() {
+    if [[ -d "$1" ]]; then
+        rm -rf "$1" || error "Failed to remove $1"
+    else
+        echo "$1 does not exist, so not deleting."
+    fi
+}
+
 # Rootify script
 [ $UID = 0 ] || exec sudo "$0" "$@"
 
@@ -582,60 +590,60 @@ if [[ ! "$PATCHMODE" == "UNINSTALL" ]]; then
         ISAMD=`chroot "$VOLUME" ioreg -l | grep Baffin`
         if [[ "$ISAMD" ]]; then
             echo 'Removing AMD bad kexts...'
-            rm -R "AMDRadeonX4000.kext" \
-                "AMDRadeonX4000HWServices.kext" \
-                "AMDRadeonX5000.kext" \
-                "AMDRadeonX5000HWServices.kext" \
-                "AMDRadeonX6000.kext" || error "Failed to delete bad kexts (1)."
-            rm -R "AMDRadeonX6000Framebuffer.kext" \
-                "AMDRadeonX6000HWServices.kext" \
-                "AMD7000Controller.kext" \
-                "AMD8000Controller.kext" \
-                "AMD9000Controller.kext" || error "Failed to delete bad kexts (2)."
-            rm -R "AMD9500Controller.kext" \
-                "AMD10000Controller.kext" \
-                "AppleIntelBDWGraphics.kext" \
-                "AppleIntelBDWGraphicsFramebuffer.kext" \
-                "AppleIntelCFLGraphicsFramebuffer.kext" || error "Failed to delete bad kexts (3)."
-            rm -R "AppleIntelHD4000Graphics.kext" \
-                "AppleIntelHD5000Graphics.kext" \
-                "AppleIntelICLGraphics.kext" \
-                "AppleIntelICLLPGraphicsFramebuffer.kext" \
-                "AppleIntelKBLGraphics.kext" || error "Failed to delete bad kexts (4)."
-            rm -R "AppleIntelKBLGraphicsFramebuffer.kext" \
-                "AppleIntelSKLGraphics.kext" \
-                "AppleIntelSKLGraphicsFramebuffer.kext" \
-                "AppleIntelFramebufferAzul.kext" \
-                "AppleIntelFramebufferCapri.kext" || error "Failed to delete bad kexts (5)."
-            rm -R "AppleParavirtGPU.kext" \
-                "GeForce.kext" \
-                "IOGPUFamily.kext" || error "Failed to delete bad kexts (6)."
+            deleteIfNeeded "AMDRadeonX4000.kext"
+            deleteIfNeeded "AMDRadeonX4000HWServices.kext"
+            deleteIfNeeded "AMDRadeonX5000.kext"
+            deleteIfNeeded "AMDRadeonX5000HWServices.kext"
+            deleteIfNeeded "AMDRadeonX6000.kext"
+            deleteIfNeeded "AMDRadeonX6000Framebuffer.kext"
+            deleteIfNeeded "AMDRadeonX6000HWServices.kext"
+            deleteIfNeeded "AMD7000Controller.kext"
+            deleteIfNeeded "AMD8000Controller.kext"
+            deleteIfNeeded "AMD9000Controller.kext"
+            deleteIfNeeded "AMD9500Controller.kext"
+            deleteIfNeeded "AMD10000Controller.kext"
+            deleteIfNeeded "AppleIntelBDWGraphics.kext"
+            deleteIfNeeded "AppleIntelBDWGraphicsFramebuffer.kext"
+            deleteIfNeeded "AppleIntelCFLGraphicsFramebuffer.kext"
+            deleteIfNeeded "AppleIntelHD4000Graphics.kext"
+            deleteIfNeeded "AppleIntelHD5000Graphics.kext"
+            deleteIfNeeded "AppleIntelICLGraphics.kext"
+            deleteIfNeeded "AppleIntelICLLPGraphicsFramebuffer.kext"
+            deleteIfNeeded "AppleIntelKBLGraphics.kext"
+            deleteIfNeeded "AppleIntelKBLGraphicsFramebuffer.kext"
+            deleteIfNeeded "AppleIntelSKLGraphics.kext"
+            deleteIfNeeded "AppleIntelSKLGraphicsFramebuffer.kext"
+            deleteIfNeeded "AppleIntelFramebufferAzul.kext"
+            deleteIfNeeded "AppleIntelFramebufferCapri.kext"
+            deleteIfNeeded "AppleParavirtGPU.kext"
+            deleteIfNeeded "GeForce.kext"
+            deleteIfNeeded "IOGPUFamily.kext"
         else
             echo 'Removing Nvidia/Intel bad kexts...'
-            rm -R "AMDRadeonX4000.kext" \
-                "AMDRadeonX4000HWServices.kext" \
-                "AMDRadeonX5000.kext" \
-                "AMDRadeonX5000HWServices.kext" \
-                "AMDRadeonX6000.kext" || error "Failed to delete bad kexts (1)."
-            rm -R "AMDRadeonX6000Framebuffer.kext" \
-                "AMDRadeonX6000HWServices.kext" \
-                "AppleIntelBDWGraphics.kext" \
-                "AppleIntelBDWGraphicsFramebuffer.kext" \
-                "AppleIntelCFLGraphicsFramebuffer.kext" || error "Failed to delete bad kexts. (2)"
-            rm -R "AppleIntelHD4000Graphics.kext" \
-                "AppleIntelHD5000Graphics.kext" \
-                "AppleIntelICLGraphics.kext" \
-                "AppleIntelICLLPGraphicsFramebuffer.kext" \
-                "AppleIntelKBLGraphics.kext" || error "Failed to delete bad kexts. (3)"
-            rm -R "AppleIntelKBLGraphicsFramebuffer.kext" \
-                "AppleIntelSKLGraphics.kext" \
-                "AppleIntelSKLGraphicsFramebuffer.kext" \
-                "AppleIntelFramebufferAzul.kext" \
-                "AppleIntelFramebufferCapri.kext" || error "Failed to delete bad kexts. (4)"
-            rm -R "AppleParavirtGPU.kext" \
-                "GeForce.kext" \
-                "IOAcceleratorFamily2.kext" \
-                "IOGPUFamily.kext" || error "Failed to delete bad kexts. (5)"
+            deleteIfNeeded "AMDRadeonX4000.kext"
+            deleteIfNeeded "AMDRadeonX4000HWServices.kext"
+            deleteIfNeeded "AMDRadeonX5000.kext"
+            deleteIfNeeded "AMDRadeonX5000HWServices.kext"
+            deleteIfNeeded "AMDRadeonX6000.kext"
+            deleteIfNeeded "AMDRadeonX6000Framebuffer.kext"
+            deleteIfNeeded "AMDRadeonX6000HWServices.kext"
+            deleteIfNeeded "AppleIntelBDWGraphics.kext"
+            deleteIfNeeded "AppleIntelBDWGraphicsFramebuffer.kext"
+            deleteIfNeeded "AppleIntelCFLGraphicsFramebuffer.kext"
+            deleteIfNeeded "AppleIntelHD4000Graphics.kext"
+            deleteIfNeeded "AppleIntelHD5000Graphics.kext"
+            deleteIfNeeded "AppleIntelICLGraphics.kext"
+            deleteIfNeeded "AppleIntelICLLPGraphicsFramebuffer.kext"
+            deleteIfNeeded "AppleIntelKBLGraphics.kext"
+            deleteIfNeeded "AppleIntelKBLGraphicsFramebuffer.kext"
+            deleteIfNeeded "AppleIntelSKLGraphics.kext"
+            deleteIfNeeded "AppleIntelSKLGraphicsFramebuffer.kext"
+            deleteIfNeeded "AppleIntelFramebufferAzul.kext"
+            deleteIfNeeded "AppleIntelFramebufferCapri.kext"
+            deleteIfNeeded "AppleParavirtGPU.kext"
+            deleteIfNeeded "GeForce.kext"
+            deleteIfNeeded "IOAcceleratorFamily2.kext"
+            deleteIfNeeded "IOGPUFamily.kext"
         fi
 
         echo 'Checking deleted kexts...'
