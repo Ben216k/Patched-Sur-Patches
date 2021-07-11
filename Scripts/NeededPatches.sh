@@ -26,7 +26,8 @@ then
         ;;
     Macmini5,?|MacBookAir4,?|MacBookPro8,?)
         echo "(2011):HDA:HD3000:USB:BCM5701:BOOTPLIST"
-        HDA="--hda" HD3000="--hd3000" USB="--legacyUSB" BCM5701="--bcm5701" BOOTPLIST="--bootPlist"
+        HD3000="--hd3000" USB="--legacyUSB" BCM5701="--bcm5701" BOOTPLIST="--bootPlist"
+        # HDA="--hda"
         ;;
     iMac11,?)
         echo "(IMAC):HDA:USB:BCM5701:AGC:BOOTPLIST"

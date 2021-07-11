@@ -381,24 +381,24 @@ if [[ ! "$PATCHMODE" == "UNINSTALL" ]]; then
         BUNDLEPATH="--bundle-path /System/Library/Extensions/LegacyUSBInjector.kext"
     fi
 
-    if [[ "$HD3000" == "YES" ]]; then
-        echo 'Patching AppleIntelHD3000Graphics* kexts/plugins/bundles.'
-        rm -rf AppleIntelHD3000* AppleIntelSNB*
-        unzip -q "$LPATCHES/KextPatches/AppleIntelHD3000Graphics.kext-17G14033.zip"
-        errorCheck "Failed to patch AppleIntelHD3000Graphics.kext."
-        unzip -q "$LPATCHES/KextPatches/AppleIntelHD3000GraphicsGA.plugin-17G14033.zip"
-        errorCheck "Failed to patch AppleIntelHD3000GraphicsGA.plugin."
-        unzip -q "$LPATCHES/KextPatches/AppleIntelHD3000GraphicsGLDriver.bundle-17G14033.zip"
-        errorCheck "Failed to patch AppleIntelHD3000GraphicsGLDriver.bundle."
-
-        echo 'Patching AppleIntelSNBGraphicsFB kext.'
-        unzip -q "$LPATCHES/KextPatches/AppleIntelSNBGraphicsFB.kext-17G14033.zip"
-        errorCheck "Failed to patch AppleIntelSNBGraphicsFB.kext."
-
-        echo 'Correcting permissions for AppleIntelHD3000Graphics* and AppleIntelSNBGraphicsFB.kext...'
-        fixPerms AppleIntelHD3000* AppleIntelSNB*
-        errorCheck "Failed to correct permissioms for AppleIntelHD3000Graphics* and/or AppleIntelSNBGraphicsFB.kext."
-    fi
+#    if [[ "$HD3000" == "YES" ]]; then
+#        echo 'Patching AppleIntelHD3000Graphics* kexts/plugins/bundles.'
+#        rm -rf AppleIntelHD3000* AppleIntelSNB*
+#        unzip -q "$LPATCHES/KextPatches/AppleIntelHD3000Graphics.kext-17G14033.zip"
+#        errorCheck "Failed to patch AppleIntelHD3000Graphics.kext."
+#        unzip -q "$LPATCHES/KextPatches/AppleIntelHD3000GraphicsGA.plugin-17G14033.zip"
+#        errorCheck "Failed to patch AppleIntelHD3000GraphicsGA.plugin."
+#        unzip -q "$LPATCHES/KextPatches/AppleIntelHD3000GraphicsGLDriver.bundle-17G14033.zip"
+#        errorCheck "Failed to patch AppleIntelHD3000GraphicsGLDriver.bundle."
+#
+#        echo 'Patching AppleIntelSNBGraphicsFB kext.'
+#        unzip -q "$LPATCHES/KextPatches/AppleIntelSNBGraphicsFB.kext-17G14033.zip"
+#        errorCheck "Failed to patch AppleIntelSNBGraphicsFB.kext."
+#
+#        echo 'Correcting permissions for AppleIntelHD3000Graphics* and AppleIntelSNBGraphicsFB.kext...'
+#        fixPerms AppleIntelHD3000* AppleIntelSNB*
+#        errorCheck "Failed to correct permissioms for AppleIntelHD3000Graphics* and/or AppleIntelSNBGraphicsFB.kext."
+#    fi
 
     if [[ "$HDA" == "YES" ]]; then
         echo "Patching AppleHDA.kext..."
@@ -490,7 +490,7 @@ if [[ ! "$PATCHMODE" == "UNINSTALL" ]]; then
         errorCheck 'Failed to fix permissions for AppleIntelHD3000* and AppleIntelSNB*.'
     fi
     if [[ "$SMB" == "KEXT" ]]; then
-        echo 'Patching ppleIntelSNBGraphicsFB.kext...'
+        echo 'Patching AppleIntelSNBGraphicsFB.kext...'
         unzip -q "$LPATCHES/KextPatches/AppleIntelSNBGraphicsFB-AMD.kext.zip"
         errorCheck 'Failed to patch AppleIntelSNBGraphicsFB.kext'
         mv AppleIntelSNBGraphicsFB-AMD.kext AppleIntelSNBGraphicsFB.kext
@@ -728,6 +728,50 @@ if [[ ! "$PATCHMODE" == "UNINSTALL" ]]; then
         errorCheck "Failed to patch IONDRVSupport.kext."
         fixPerms "IONDRVSupport.kext"
         errorCheck "Failed to fix permissions for IONDRVSupport.kext"
+
+        if [[ "$HD3000" == "YES" ]]; then
+            echo 'Patching AppleIntelHD3000Graphics.kext...'
+            deleteIfNeeded "AppleIntelHD3000Graphics.kext"
+            unzip -q "$LPATCHES/SystemPatches/HD3000/AppleIntelHD3000Graphics.kext.zip"
+            errorCheck "Failed to patch AppleIntelHD3000Graphics.kext."
+            fixPerms "AppleIntelHD3000Graphics.kext"
+            errorCheck "Failed to fix permissions for AppleIntelHD3000Graphics.kext"
+
+            echo 'Patching AppleIntelHD3000GraphicsGA.plugin...'
+            deleteIfNeeded "AppleIntelHD3000GraphicsGA.plugin"
+            unzip -q "$LPATCHES/SystemPatches/HD3000/AppleIntelHD3000GraphicsGA.plugin.zip"
+            errorCheck "Failed to patch AppleIntelHD3000GraphicsGA.plugin."
+            fixPerms "AppleIntelHD3000GraphicsGA.plugin"
+            errorCheck "Failed to fix permissions for AppleIntelHD3000GraphicsGA.plugin"
+
+            echo 'Patching AppleIntelHD3000GraphicsGLDriver.bundle...'
+            deleteIfNeeded "AppleIntelHD3000GraphicsGLDriver.bundle"
+            unzip -q "$LPATCHES/SystemPatches/HD3000/AppleIntelHD3000GraphicsGLDriver.bundle.zip"
+            errorCheck "Failed to patch AppleIntelHD3000GraphicsGLDriver.bundle."
+            fixPerms "AppleIntelHD3000GraphicsGLDriver.bundle"
+            errorCheck "Failed to fix permissions for AppleIntelHD3000GraphicsGLDriver.bundle"
+
+            echo 'Patching AppleIntelHD3000GraphicsVADriver.bundle...'
+            deleteIfNeeded "AppleIntelHD3000GraphicsVADriver.bundle"
+            unzip -q "$LPATCHES/SystemPatches/HD3000/AppleIntelHD3000GraphicsVADriver.bundle.zip"
+            errorCheck "Failed to patch AppleIntelHD3000GraphicsVADriver.bundle."
+            fixPerms "AppleIntelHD3000GraphicsVADriver.bundle"
+            errorCheck "Failed to fix permissions for AppleIntelHD3000GraphicsVADriver.bundle"
+
+            echo 'Patching AppleIntelSNBGraphicsFB.kext...'
+            deleteIfNeeded "AppleIntelSNBGraphicsFB.kext"
+            unzip -q "$LPATCHES/SystemPatches/HD3000/AppleIntelSNBGraphicsFB.kext.zip"
+            errorCheck "Failed to patch AppleIntelSNBGraphicsFB.kext."
+            fixPerms "AppleIntelSNBGraphicsFB.kext"
+            errorCheck "Failed to fix permissions for AppleIntelSNBGraphicsFB.kext"
+
+            echo 'Patching AppleIntelSNBVA.bundle...'
+            deleteIfNeeded "AppleIntelSNBVA.bundle.kext"
+            unzip -q "$LPATCHES/SystemPatches/HD3000/AppleIntelSNBVA.bundle.zip"
+            errorCheck "Failed to patch AppleIntelSNBVA.bundle."
+            fixPerms "AppleIntelSNBVA.bundle"
+            errorCheck "Failed to fix permissions for AppleIntelSNBVA.bundle"
+        fi
 
         popd > /dev/null
     fi
