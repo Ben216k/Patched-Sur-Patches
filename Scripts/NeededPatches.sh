@@ -71,6 +71,6 @@ fi
 
 if [[ "$1" == "--rerun" ]]; then
     echo "Running PatchSystem.sh..."
-    "$(dirname "$0")/PatchSystem.sh" $WIFI $HDA $HD3000 $USB $GFTESLA $NVNET $BCM5701 $TELEMETRY $AGC $MCCS $SMB $BACKLIGHT $BACKLIGHTFIXUP $VIT9696 $BOOTPLIST $2
+    "$2/PatchSystem.sh" $WIFI $HDA $HD3000 $USB $GFTESLA $NVNET $BCM5701 $TELEMETRY $AGC $MCCS $SMB $BACKLIGHT $BACKLIGHTFIXUP $VIT9696 $BOOTPLIST $3
     exit $?
 fi

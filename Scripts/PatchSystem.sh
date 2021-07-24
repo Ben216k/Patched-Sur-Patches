@@ -13,9 +13,42 @@
 #  on unsupported Macs
 #
 
+echo "Checking environment..."
+LPATCHES="/Volumes/Image Volume"
+if [[ -d "$LPATCHES" ]]; then
+    echo "[INFO] We're in a recovery environment."
+    RECOVERY="YES"
+else
+    echo "[INFO] We're booted into full macOS."
+    RECOVERY="NO"
+    if [[ -d "/Volumes/Install macOS Big Sur/KextPatches" ]]; then
+        echo `[INFO] Using Install macOS Big Sur source.`
+        LPATCHES="/Volumes/Install macOS Big Sur"
+    elif [[ -d "/Volumes/Install macOS Big Sur Beta/KextPatches" ]]; then
+        echo '[INFO] Using Install macOS Big Sur Beta source.'
+        LPATCHES="/Volumes/Install macOS Big Sur Beta"
+    elif [[ -d "/Volumes/Install macOS Beta/KextPatches" ]]; then
+        echo '[INFO] Using Install macOS Beta source.'
+        LPATCHES="/Volumes/Install macOS Beta"
+    elif [[ -d "/usr/local/lib/Patched-Sur-Patches/KextPatches" ]]; then
+        echo '[INFO] Using usr lib source.'
+        LPATCHES="/usr/local/lib/Patched-Sur-Patches"
+    fi
+fi
+
+echo
+echo "Confirming patch location..."
+
+if [[ ! -d "$LPATCHES" ]]; then
+    echo "After checking every normal place, the patches were not found"
+    echo "Please plug in a patched macOS installer USB, or install the"
+    echo "Patched Sur post-install app to your Mac."
+    error "Error 3x1: The patches for PatchKexts.sh were not detected."
+fi
+
 if [[ "$1" == "--detect" ]]; then
     echo "Set to detect patches, restarting PatchSystem with NeededPatches..."
-    "$(dirname "$0")/NeededPatches.sh" --rerun $2
+    "$LPATCHES/NeededPatches.sh" --rerun "$LPATCHES" $2
     exit $?
 fi
 
@@ -90,39 +123,6 @@ echo 'Note: This script is still in alpha stages.'
 echo
 
 # MARK: Check Environment and Patch Kexts Location
-
-echo "Checking environment..."
-LPATCHES="/Volumes/Image Volume"
-if [[ -d "$LPATCHES" ]]; then
-    echo "[INFO] We're in a recovery environment."
-    RECOVERY="YES"
-else
-    echo "[INFO] We're booted into full macOS."
-    RECOVERY="NO"
-    if [[ -d "/Volumes/Install macOS Big Sur/KextPatches" ]]; then
-        echo `[INFO] Using Install macOS Big Sur source.`
-        LPATCHES="/Volumes/Install macOS Big Sur"
-    elif [[ -d "/Volumes/Install macOS Big Sur Beta/KextPatches" ]]; then
-        echo '[INFO] Using Install macOS Big Sur Beta source.'
-        LPATCHES="/Volumes/Install macOS Big Sur Beta"
-    elif [[ -d "/Volumes/Install macOS Beta/KextPatches" ]]; then
-        echo '[INFO] Using Install macOS Beta source.'
-        LPATCHES="/Volumes/Install macOS Beta"
-    elif [[ -d "/usr/local/lib/Patched-Sur-Patches/KextPatches" ]]; then
-        echo '[INFO] Using usr lib source.'
-        LPATCHES="/usr/local/lib/Patched-Sur-Patches"
-    fi
-fi
-
-echo
-echo "Confirming patch location..."
-
-if [[ ! -d "$LPATCHES" ]]; then
-    echo "After checking every normal place, the patches were not found"
-    echo "Please plug in a patched macOS installer USB, or install the"
-    echo "Patched Sur post-install app to your Mac."
-    error "Error 3x1: The patches for PatchKexts.sh were not detected."
-fi
 
 echo "[INFO] Patch Location: $LPATCHES"
 

@@ -124,8 +124,10 @@ echo
 
 #echo "PatchKexts.sh cannot be added yet."
 echo 'Adding Backup Scripts...'
-echo 'Adding patch-kexts.sh...'
-cp -f "$PATCHES/Scripts/PatchKexts.sh" "$INSTALLER" || error 'Error 2x2 Unable to add patch-kexts.sh'
+echo 'Adding PatchSystem.sh...'
+cp -f "$PATCHES/Scripts/PatchKexts.sh" "$INSTALLER" || error 'Error 2x2 Unable to add PatchKexts.sh'
+cp -f "$PATCHES/Scripts/PatchSystem.sh" "$INSTALLER" || error 'Error 2x2 Unable to add PatchSystem.sh'
+cp -f "$PATCHES/Scripts/NeededPatches.sh" "$INSTALLER" || error 'Error 2x2 Unable to add NeededPatches.sh'
 echo 'Adding extra commands...'
 cp -a $PATCHES/ArchiveBin "$INSTALLER/ArchiveBin" || error 'Error 2x2 Unable to add extra commands.'
 #echo 'Added extra commands...'
