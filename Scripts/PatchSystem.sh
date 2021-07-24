@@ -46,11 +46,19 @@ if [[ ! -d "$LPATCHES" ]]; then
     error "Error 3x1: The patches for PatchKexts.sh were not detected."
 fi
 
-if [[ "$1" == "--detect" ]]; then
+if [[ "$1" == "--detect" ]] || [[ -z "$1" ]]; then
     echo "Set to detect patches, restarting PatchSystem with NeededPatches..."
     "$LPATCHES/NeededPatches.sh" --rerun "$LPATCHES" $2
     exit $?
+elif echo "$1" | grep "/Volumes"; then
+    echo "Set to detect patches, restarting PatchSystem with NeededPatches..."
+    "$LPATCHES/NeededPatches.sh" --rerun "$LPATCHES" $1
+    exit $?
 fi
+
+exit 0
+exit 0
+exit
 
 # MARK: Functions for Later
 
