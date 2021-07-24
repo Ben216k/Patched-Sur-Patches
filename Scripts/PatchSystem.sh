@@ -13,6 +13,8 @@
 #  on unsupported Macs
 #
 
+[ $UID = 0 ] || exec sudo "$0" "$@"
+
 echo "Checking environment..."
 LPATCHES="/Volumes/Image Volume"
 if [[ -d "$LPATCHES" ]]; then
@@ -21,8 +23,11 @@ if [[ -d "$LPATCHES" ]]; then
 else
     echo "[INFO] We're booted into full macOS."
     RECOVERY="NO"
-    if [[ -d "/Volumes/Install macOS Big Sur/KextPatches" ]]; then
-        echo `[INFO] Using Install macOS Big Sur source.`
+    if [[ -d "$(dirname $0)/../KextPatches" ]]; then
+        echo '[INFO] Using dirname source.'
+        LPATCHES="$(dirname $0)"
+    elif [[ -d "/Volumes/Install macOS Big Sur/KextPatches" ]]; then
+        echo '[INFO] Using Install macOS Big Sur source.'
         LPATCHES="/Volumes/Install macOS Big Sur"
     elif [[ -d "/Volumes/Install macOS Big Sur Beta/KextPatches" ]]; then
         echo '[INFO] Using Install macOS Big Sur Beta source.'
@@ -33,9 +38,6 @@ else
     elif [[ -d "/usr/local/lib/Patched-Sur-Patches/KextPatches" ]]; then
         echo '[INFO] Using usr lib source.'
         LPATCHES="/usr/local/lib/Patched-Sur-Patches"
-    elif [[ -d "$(dirname $0)/KextPatches" ]]; then
-        echo '[INFO] Using dirname source.'
-        LPATCHES="$(dirname $0)"
     fi
 fi
 
@@ -58,10 +60,6 @@ elif echo "$1" | grep "/Volumes"; then
     "$LPATCHES/NeededPatches.sh" --rerun "$LPATCHES" $1
     exit $?
 fi
-
-exit 0
-exit 0
-exit
 
 # MARK: Functions for Later
 
@@ -127,7 +125,6 @@ deleteIfNeeded() {
 }
 
 # Rootify script
-[ $UID = 0 ] || exec sudo "$0" "$@"
 
 echo 'Welcome to PatchSystem.sh (for Patched Sur)!'
 echo 'Note: This script is still in alpha stages.'
