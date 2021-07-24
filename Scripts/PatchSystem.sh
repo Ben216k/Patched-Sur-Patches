@@ -33,6 +33,9 @@ else
     elif [[ -d "/usr/local/lib/Patched-Sur-Patches/KextPatches" ]]; then
         echo '[INFO] Using usr lib source.'
         LPATCHES="/usr/local/lib/Patched-Sur-Patches"
+    elif [[ -d "$(dirname $0)/KextPatches" ]]; then
+        echo '[INFO] Using dirname source.'
+        LPATCHES="$(dirname $0)"
     fi
 fi
 
