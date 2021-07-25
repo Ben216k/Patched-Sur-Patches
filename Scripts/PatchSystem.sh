@@ -250,21 +250,21 @@ done
 echo
 echo 'Checking patch to volume...'
 
-if [[ $RECOVERY == "YES" ]] && [[ ! -d "/Volumes/$1" ]]; then
-    echo "[CONFIG] Looking for /Volumes/$1"
+if [[ $RECOVERY == "YES" ]] && [[ ! -d "$1" ]]; then
+    echo "[CONFIG] Looking for $1"
     echo 'Make sure to run the script with path/to/PatchSystem.sh "NAME-OF-BIG-SUR-VOLUME"'
     error "No volume was specificed on the command line or the volume selected is invalid."
 elif [[ $RECOVERY == "NO" ]]; then
     echo "[CONFIG] Patching to /System/Volumes/Update/mnt1 (booted system snapshot)"
     VOLUME="/"
 else
-    echo "[CONFIG] Patching to /Volumes/$1"
+    echo "[CONFIG] Patching to $1"
 fi
 
 if [[ ! -d "$VOLUME" ]]
 then
     echo 'Make sure to run the script with path/to/PatchSystem.sh "NAME-OF-BIG-SUR-VOLUME"'
-    error "No volume was specificed on the command line or the volume selected is invalid."
+    error "No volume was specified on the command line or the volume selected is invalid."
 fi
 
 echo
