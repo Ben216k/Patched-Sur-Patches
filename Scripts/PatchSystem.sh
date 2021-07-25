@@ -53,11 +53,11 @@ fi
 
 if [[ "$1" == "--detect" ]] || [[ -z "$1" ]]; then
     echo "Set to detect patches, restarting PatchSystem with NeededPatches..."
-    "$LPATCHES/NeededPatches.sh" --rerun "$LPATCHES" $2
+    "$LPATCHES/NeededPatches.sh" --rerun "$LPATCHES" "$2"
     exit $?
 elif echo "$1" | grep "/Volumes"; then
     echo "Set to detect patches, restarting PatchSystem with NeededPatches..."
-    "$LPATCHES/NeededPatches.sh" --rerun "$LPATCHES" $1
+    "$LPATCHES/NeededPatches.sh" --rerun "$LPATCHES" "$1"
     exit $?
 fi
 
