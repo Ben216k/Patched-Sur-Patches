@@ -250,7 +250,7 @@ done
 echo
 echo 'Checking patch to volume...'
 
-if [[ $RECOVERY == "YES" ]] && [[ ! -d "$1" ]]; then
+if [[ ! -d "$1" ]]; then
     echo "[CONFIG] Looking for $1"
     echo 'Make sure to run the script with path/to/PatchSystem.sh "NAME-OF-BIG-SUR-VOLUME"'
     error "No volume was specificed on the command line or the volume selected is invalid."
