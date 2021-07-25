@@ -259,6 +259,7 @@ elif [[ $RECOVERY == "NO" ]] && [[ -z "$1" ]]; then
     VOLUME="/"
 else
     echo "[CONFIG] Patching to $1"
+    VOLUME="$1"
 fi
 
 if [[ ! -d "$VOLUME" ]]
