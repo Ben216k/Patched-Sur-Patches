@@ -25,7 +25,7 @@ else
     RECOVERY="NO"
     if [[ -d "$(dirname $0)/../KextPatches" ]]; then
         echo '[INFO] Using dirname source.'
-        LPATCHES="$(dirname $0)"
+        LPATCHES="$(dirname $0)/.."
     elif [[ -d "/Volumes/Install macOS Big Sur/KextPatches" ]]; then
         echo '[INFO] Using Install macOS Big Sur source.'
         LPATCHES="/Volumes/Install macOS Big Sur"
