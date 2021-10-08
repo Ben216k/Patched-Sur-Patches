@@ -342,7 +342,7 @@ then
     exit 1
 fi
 
-DEVICE=`echo -n $MOUNTEDPARTITION | sed -e 's/s[0-9]*$//' | head -n 1`
+DEVICE=`echo -n $MOUNTEDPARTITION | sed -e 's/s[0-9]*$//' | head -n 1 | sed -e 's/s[0-9]*$//' | head -n 1 | sed -e 's+/dev/++g'`
 PARTITION=`echo -n $MOUNTEDPARTITION | sed -e 's/^.*disk[0-9]*s//'`
 echo "$VOLUME found on device $MOUNTEDPARTITION"
 
@@ -353,9 +353,7 @@ then
     echo "incorrectly partitioned (possibly MBR instead of GPT?)."
     echo
     echo 'Please use Disk Utility to erase the USB stick as "Mac OS Extended'
-    echo '(Journaled)" format on "GUID Partition Map" scheme and start over with'
-    echo '"createinstallmedia". Or for other methods, please refer to the micropatcher'
-    echo "README for more information."
+    echo '(Journaled)" format on "GUID Partition Map" scheme'
     echo
     echo "install-setvars cannot continue."
     exit 1
