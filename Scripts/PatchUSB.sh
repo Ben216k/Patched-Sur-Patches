@@ -342,7 +342,7 @@ then
     exit 1
 fi
 
-DEVICE=`echo -n $MOUNTEDPARTITION | sed -e 's/s[0-9]*$//' | head -n 1 | sed -e 's/s[0-9]*$//' | head -n 1 | sed -e 's+/dev/++g'`
+DEVICE=`echo -n $MOUNTEDPARTITION | sed -e 's/s[0-9]*$//' | head -n 1 | sed -e 's/s[0-9]*$//' | head -n 1 | sed -e 's+/dev/++g' | sed -e 's/disk.s2 //g'`
 PARTITION=`echo -n $MOUNTEDPARTITION | sed -e 's/^.*disk[0-9]*s//'`
 echo "$VOLUME found on device $MOUNTEDPARTITION"
 
