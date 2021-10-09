@@ -359,7 +359,11 @@ then
     exit 1
 fi
 
+echo "----"
+echo "${DEVICE}"
+echo "----"
 echo "diskutil mount ${DEVICE}s1"
+echo "----"
 diskutil mount ${DEVICE}s1
 if [ ! -d "/Volumes/EFI" ]
 then
