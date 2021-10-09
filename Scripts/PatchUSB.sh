@@ -359,6 +359,7 @@ then
     exit 1
 fi
 
+echo "diskutil mount ${DEVICE}s1"
 diskutil mount ${DEVICE}s1
 if [ ! -d "/Volumes/EFI" ]
 then
