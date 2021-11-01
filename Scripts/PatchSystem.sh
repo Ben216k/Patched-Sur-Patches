@@ -23,21 +23,31 @@ if [[ -d "$LPATCHES" ]]; then
 else
     echo "[INFO] We're booted into full macOS."
     RECOVERY="NO"
-    if [[ -d "$(dirname $0)/../KextPatches" ]]; then
-        echo '[INFO] Using dirname source.'
-        LPATCHES="$(dirname $0)/.."
-    elif [[ -d "/Volumes/Install macOS Big Sur/KextPatches" ]]; then
+    if [[ -d "/Volumes/Install macOS Big Sur/KextPatches" ]]; then
         echo '[INFO] Using Install macOS Big Sur source.'
         LPATCHES="/Volumes/Install macOS Big Sur"
+        BACKPACK="/Volumes/Install macOS Big Sur"
     elif [[ -d "/Volumes/Install macOS Big Sur Beta/KextPatches" ]]; then
         echo '[INFO] Using Install macOS Big Sur Beta source.'
         LPATCHES="/Volumes/Install macOS Big Sur Beta"
+        BACKPACK="/Volumes/Install macOS Big Sur Beta"
     elif [[ -d "/Volumes/Install macOS Beta/KextPatches" ]]; then
         echo '[INFO] Using Install macOS Beta source.'
         LPATCHES="/Volumes/Install macOS Beta"
+        BACKPACK="/Volumes/Install macOS Beta"
     elif [[ -d "/usr/local/lib/Patched-Sur-Patches/KextPatches" ]]; then
         echo '[INFO] Using usr lib source.'
         LPATCHES="/usr/local/lib/Patched-Sur-Patches"
+        BACKPACK="/usr/local/lib/Patched-Sur-Patches/Scripts"
+    elif [[ -d "$(dirname $0)/../KextPatches" ]]; then
+        echo '[INFO] Using dirname source.'
+        LPATCHES="$(dirname $0)/.."
+
+        BACKPACK="$LPATCHES"
+
+        if [[ ! -e "$BACKPACK/NeededPatches.sh" ]]; then
+            BACKPACK="$LPATCHES/Scripts"
+        fi
     fi
 fi
 
@@ -46,15 +56,9 @@ echo "Confirming patch location..."
 
 if [[ ! -d "$LPATCHES" ]]; then
     echo "After checking every normal place, the patches were not found"
-    echo "Please plug in a patched macOS installer USB, or install the"
-    echo "Patched Sur post-install app to your Mac."
-    error "Error 3x1: The patches for PatchKexts.sh were not detected."
-fi
-
-BACKPACK="$LPATCHES"
-
-if [[ ! -e "$BACKPACK/NeededPatches.sh" ]]; then
-    BACKPACK="$LPATCHES/Scripts"
+    echo "Please plug in a patched macOS installer USB made with Patched"
+    echo "Sur. This is an interesting error."
+    error "Error 3x1: The patches for PatchSystem.sh were not detected."
 fi
 
 if [[ "$1" == "--detect" ]] || [[ -z "$1" ]]; then
