@@ -20,6 +20,7 @@ LPATCHES="/Volumes/Image Volume"
 if [[ -d "$LPATCHES" ]]; then
     echo "[INFO] We're in a recovery environment."
     RECOVERY="YES"
+    BACKPACK="/Volumes/Image Volume"
 else
     echo "[INFO] We're booted into full macOS."
     RECOVERY="NO"
@@ -38,7 +39,7 @@ else
     elif [[ -d "/usr/local/lib/Patched-Sur-Patches/KextPatches" ]]; then
         echo '[INFO] Using usr lib source.'
         LPATCHES="/usr/local/lib/Patched-Sur-Patches"
-        BACKPACK="/usr/local/lib/Patched-Sur-Patches/Scripts"
+        BACKPACK="/usr/local/lib/Patched-Sur-Patches"
     elif [[ -d "$(dirname $0)/../KextPatches" ]]; then
         echo '[INFO] Using dirname source.'
         LPATCHES="$(dirname $0)/.."
@@ -46,7 +47,7 @@ else
         BACKPACK="$LPATCHES"
 
         if [[ ! -e "$BACKPACK/NeededPatches.sh" ]]; then
-            BACKPACK="$LPATCHES/Scripts"
+            BACKPACK="$LPATCHES"
         fi
     fi
 fi
@@ -63,11 +64,11 @@ fi
 
 if [[ "$1" == "--detect" ]] || [[ -z "$1" ]]; then
     echo "Set to detect patches, restarting PatchSystem with NeededPatches..."
-    "$LPATCHES/NeededPatches.sh" --rerun "$BACKPACK" "$2"
+    "$LPATCHES/Scripts/NeededPatches.sh" --rerun "$BACKPACK/Scripts" "$2"
     exit $?
 elif echo "$1" | grep "/Volumes"; then
     echo "Set to detect patches, restarting PatchSystem with NeededPatches..."
-    "$LPATCHES/NeededPatches.sh" --rerun "$BACKPACK" "$1"
+    "$LPATCHES/Scripts/NeededPatches.sh" --rerun "$BACKPACK/Scripts" "$1"
     exit $?
 fi
 
