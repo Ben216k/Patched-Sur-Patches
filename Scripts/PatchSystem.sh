@@ -390,7 +390,7 @@ if [[ ! "$PATCHMODE" == "UNINSTALL" ]]; then
         popd > /dev/null
     elif [[ "$WIFIPATCH" == "nativePlus" ]]; then
         echo "Patching IO80211Family.kext with NativePlus..."
-        backupIfNeededCP"IO80211Family.kext" 
+        backupIfNeeded "IO80211Family.kext" 
         /usr/libexec/PlistBuddy -c "Set :IOKitPersonalities:Broadcom\ 802.11\ PCI:IONameMatch:0 $(ioreg -r -n ARPT | grep IOName | cut -c 19- | rev | cut -c 2- | rev)" IO80211Family.kext/Contents/PlugIns/AirPortBrcmNIC.kext/Contents/Info.plist
         errorCheck "Failed to patch IO80211Family.kext."
         echo "Correcting permissions for IO80211Family.kext..."

@@ -62,14 +62,26 @@ if [[ ! -d "$LPATCHES" ]]; then
     error "Error 3x1: The patches for PatchSystem.sh were not detected."
 fi
 
-if [[ "$1" == "--detect" ]] || [[ -z "$1" ]]; then
-    echo "Set to detect patches, restarting PatchSystem with NeededPatches..."
-    "$LPATCHES/Scripts/NeededPatches.sh" --rerun "$BACKPACK/Scripts" "$2"
-    exit $?
-elif echo "$1" | grep "/Volumes"; then
-    echo "Set to detect patches, restarting PatchSystem with NeededPatches..."
-    "$LPATCHES/Scripts/NeededPatches.sh" --rerun "$BACKPACK/Scripts" "$1"
-    exit $?
+if [[ -e "$LPATCHES/Scripts/NeededPatches.sh" ]]; then
+    if [[ "$1" == "--detect" ]] || [[ -z "$1" ]]; then
+        echo "Set to detect patches, restarting PatchSystem with NeededPatches..."
+        "$LPATCHES/Scripts/NeededPatches.sh" --rerun "$BACKPACK/Scripts" "$2"
+        exit $?
+    elif echo "$1" | grep "/Volumes"; then
+        echo "Set to detect patches, restarting PatchSystem with NeededPatches..."
+        "$LPATCHES/Scripts/NeededPatches.sh" --rerun "$BACKPACK/Scripts" "$1"
+        exit $?
+    fi
+else
+    if [[ "$1" == "--detect" ]] || [[ -z "$1" ]]; then
+        echo "Set to detect patches, restarting PatchSystem with NeededPatches..."
+        "$LPATCHES/NeededPatches.sh" --rerun "$BACKPACK" "$2"
+        exit $?
+    elif echo "$1" | grep "/Volumes"; then
+        echo "Set to detect patches, restarting PatchSystem with NeededPatches..."
+        "$LPATCHES/NeededPatches.sh" --rerun "$BACKPACK" "$1"
+        exit $?
+    fi
 fi
 
 # MARK: Functions for Later
@@ -170,6 +182,10 @@ while [[ $1 == -* ]]; do
         --wifi=mojaveHybrid)
             echo '[CONFIG] Will use Mojave-Hybrid WiFi patch.'
             WIFIPATCH="mojaveHybrid"
+            ;;
+        --wifi=nativePlus)
+            echo '[CONFIG] Will use EXPERIMENTAL Native-Plus WiFi patch.'
+            WIFIPATCH="nativePlus"
             ;;
         --wifi=none)
             echo '[CONFIG] Will not use any WiFi patches.'
@@ -372,6 +388,14 @@ if [[ ! "$PATCHMODE" == "UNINSTALL" ]]; then
         unzip -q "$LPATCHES/KextPatches/AirPortAtheros40-17G14033+pciid.kext.zip"
         errorCheck "Failed to patch IO80211Family.kext with mojaveHybrid (part 2)."
         popd > /dev/null
+    elif [[ "$WIFIPATCH" == "nativePlus" ]]; then
+        echo "Patching IO80211Family.kext with NativePlus..."
+        backupIfNeeded "IO80211Family.kext" 
+        /usr/libexec/PlistBuddy -c "Set :IOKitPersonalities:Broadcom\ 802.11\ PCI:IONameMatch:0 $(ioreg -r -n ARPT | grep IOName | cut -c 19- | rev | cut -c 2- | rev)" IO80211Family.kext/Contents/PlugIns/AirPortBrcmNIC.kext/Contents/Info.plist
+        errorCheck "Failed to patch IO80211Family.kext."
+        echo "Correcting permissions for IO80211Family.kext..."
+        fixPerms "IO80211Family.kext"
+        errorCheck "Failed to correct permissioms for IO80211Family.kext."
     elif [[ "$WIFIPATCH" == "hv12vOld" ]]; then
         echo "Patching IO80211Family.kext with hv12vOld..."
         unzip -q "$LPATCHES/KextPatches/IO80211Family-highvoltage12v-old.kext.zip"
@@ -389,177 +413,7 @@ if [[ ! "$PATCHMODE" == "UNINSTALL" ]]; then
         errorCheck "Failed to correct permissioms for IO80211Family.kext."
     fi
 
-    if [[ "$LEGACYUSB" == "YES" ]]; then
-        echo 'Patching LegacyUSBInjector.kext...'
-        rm -rf LegacyUSBInjector.kext
-        unzip -q "$LPATCHES/KextPatches/LegacyUSBInjector.kext.zip"
-        errorCheck "Failed to patch LegacyUSBInjector.kext."
-        echo 'Correcting permissions for LegacyUSBInjector.kext...'
-        fixPerms LegacyUSBInjector.kext
-        errorCheck "Failed to correct permissioms for LegacyUSBInjector.kext."
-        # parameter for kmutil later on
-        BUNDLEPATH="--bundle-path /System/Library/Extensions/LegacyUSBInjector.kext"
-    fi
-
-#    if [[ "$HD3000" == "YES" ]]; then
-#        echo 'Patching AppleIntelHD3000Graphics* kexts/plugins/bundles.'
-#        rm -rf AppleIntelHD3000* AppleIntelSNB*
-#        unzip -q "$LPATCHES/KextPatches/AppleIntelHD3000Graphics.kext-17G14033.zip"
-#        errorCheck "Failed to patch AppleIntelHD3000Graphics.kext."
-#        unzip -q "$LPATCHES/KextPatches/AppleIntelHD3000GraphicsGA.plugin-17G14033.zip"
-#        errorCheck "Failed to patch AppleIntelHD3000GraphicsGA.plugin."
-#        unzip -q "$LPATCHES/KextPatches/AppleIntelHD3000GraphicsGLDriver.bundle-17G14033.zip"
-#        errorCheck "Failed to patch AppleIntelHD3000GraphicsGLDriver.bundle."
-#
-#        echo 'Patching AppleIntelSNBGraphicsFB kext.'
-#        unzip -q "$LPATCHES/KextPatches/AppleIntelSNBGraphicsFB.kext-17G14033.zip"
-#        errorCheck "Failed to patch AppleIntelSNBGraphicsFB.kext."
-#
-#        echo 'Correcting permissions for AppleIntelHD3000Graphics* and AppleIntelSNBGraphicsFB.kext...'
-#        fixPerms AppleIntelHD3000* AppleIntelSNB*
-#        errorCheck "Failed to correct permissioms for AppleIntelHD3000Graphics* and/or AppleIntelSNBGraphicsFB.kext."
-#    fi
-
-    if [[ "$HDA" == "YES" ]]; then
-        echo "Patching AppleHDA.kext..."
-        backupIfNeeded "AppleHDA.kext"
-        unzip -q "$LPATCHES/KextPatches/AppleHDA-17G14033.kext.zip"
-        errorCheck "Failed to patch AppleHDA.kext."
-        echo 'Correcting permissions for AppleHDA.kext...'
-        fixPerms AppleHDA.kext
-        errorCheck "Failed to correct permissioms for AppleHDA.kext."
-    fi
-
-    if [[ "$BCM5701" == "YES" ]]; then
-        echo 'Patching AppleBCM5701Ethernet.kext...'
-        pushd IONetworkingFamily.kext/Contents/Plugins > /dev/null
-        backupIfNeeded "AppleBCM5701Ethernet.kext"
-        unzip -q "$LPATCHES/KextPatches/AppleBCM5701Ethernet-19H2.kext.zip"
-        errorCheck "Failed to patch AppleBCM5701Ethernet.kext."
-        echo 'Correcting permissions for AppleBCM5701Ethernet.kexts...'
-        fixPerms AppleBCM5701Ethernet.kext
-        errorCheck "Failed to correct permissioms for AppleBCM5701Ethernet.kext."
-        popd > /dev/null
-    fi
-
-    if [[ "$GFTESLA" == "YES" ]]; then
-        echo 'Patching GeForceTesla.kexts...'
-        rm -rf *Tesla*
-        unzip -q "$LPATCHES/KextPatches/GeForceTesla-17G14033.zip"
-        errorCheck "Failed to patch GeForceTesla.kext."
-        unzip -q "$LPATCHES/KextPatches/NVDANV50HalTesla-17G14033.kext.zip"
-        errorCheck "Failed to patch NVDANV50HalTesla.kext."
-        unzip -q "$LPATCHES/KextPatches/NVDAResmanTesla-ASentientBot.kext.zip"
-        errorCheck "Failed to patch NVDAResmanTesla.kext."
-        rm -rf __MACOSX
-        echo 'Correcting permissions for GeForceTesla.kexts...'
-        fixPerms *Tesla*
-        errorCheck "Failed to correct permissions for GeForceTesla.kexts."
-    fi
-
-    if [[ "$NVNET" == "YES" ]]; then
-        echo 'Patching nvenet.kext...'
-        pushd IONetworkingFamily.kext/Contents/Plugins > /dev/null
-        rm -rf nvenet.kext
-        unzip -q "$LPATCHES/KextPatches/nvenet-17G14033.kext.zip"
-        errorCheck "Failed to patch nvenet.kext."
-        echo 'Fixing permissions for nvenet.kext...'
-        fixPerms nvenet.kext
-        errorCheck "Failed to correct permissions for nvenet.kexts."
-        popd > /dev/null
-    fi
-
-    if [[ "$AGC" == "YES" ]]; then
-        echo 'Patching AppleGraphicsControl.kext...'
-        if [ -f AppleGraphicsControl.kext.zip ]
-        then
-           rm -rf AppleGraphicsControl.kext
-           unzip -q AppleGraphicsControl.kext.zip
-           rm -rf AppleGraphicsControl.kext.zip
-        else
-           zip -q -r -X AppleGraphicsControl.kext.zip AppleGraphicsControl.kext
-        fi
-        /usr/libexec/PlistBuddy -c 'Add :IOKitPersonalities:AppleGraphicsDevicePolicy:ConfigMap:Mac-942B59F58194171B string none' AppleGraphicsControl.kext/Contents/PlugIns/AppleGraphicsDevicePolicy.kext/Contents/Info.plist
-        /usr/libexec/PlistBuddy -c 'Add :IOKitPersonalities:AppleGraphicsDevicePolicy:ConfigMap:Mac-942B5BF58194151B string none' AppleGraphicsControl.kext/Contents/PlugIns/AppleGraphicsDevicePolicy.kext/Contents/Info.plist
-        /usr/libexec/PlistBuddy -c 'Add :IOKitPersonalities:AppleGraphicsDevicePolicy:ConfigMap:Mac-F2268DAE string none' AppleGraphicsControl.kext/Contents/PlugIns/AppleGraphicsDevicePolicy.kext/Contents/Info.plist
-        /usr/libexec/PlistBuddy -c 'Add :IOKitPersonalities:AppleGraphicsDevicePolicy:ConfigMap:Mac-F2238AC8 string none' AppleGraphicsControl.kext/Contents/PlugIns/AppleGraphicsDevicePolicy.kext/Contents/Info.plist
-        /usr/libexec/PlistBuddy -c 'Add :IOKitPersonalities:AppleGraphicsDevicePolicy:ConfigMap:Mac-F2238BAE string none' AppleGraphicsControl.kext/Contents/PlugIns/AppleGraphicsDevicePolicy.kext/Contents/Info.plist
-        echo 'Correcting permissions for AppleGraphicsControl.kext'
-        fixPerms AppleGraphicsControl.kext
-        errorCheck 'Failed to correct permissions for AppleGraphicsControl.kext'
-    fi
-
-    if [[ "$MCCS" == "YES" ]]; then
-        echo 'Patching AppleMCCSControl.kext...'
-        backupIfNeeded "AppleMCCSControl.kext"
-        unzip -q "$LPATCHES/KextPatches/AppleMCCSControl.kext.zip"
-        errorCheck 'Failed to patch AppleMCCSControl.kext'
-        echo 'Correcting permissions for AppleMCCSControl.kext'
-        fixPerms AppleMCCSControl.kext
-        errorCheck 'Failed to correct permissions for AppleMCCSControl.kext'
-    fi
-
-    if [[ ! -z "$SMB" ]]; then
-        echo 'Patching AppleIntelHD3000GraphicsVADriver.bundle and AppleIntelSNBVA.bundle.'
-        unzip -q "$LPATCHES/KextPatches/AppleIntelHD3000GraphicsVADriver.bundle-17G14033.zip"
-        errorCheck 'Failed to patch AppleIntelHD3000GraphicsVADriver.bundle'
-        unzip -q "$LPATCHES/KextPatches/AppleIntelSNBVA.bundle-17G14033.zip"
-        errorCheck 'Failed to patch AppleIntelSNBVA.bundle'
-        echo 'Correcting permissions for AppleIntelHD3000* and AppleIntelSNB*...'
-        fixPerms AppleIntelHD3000* AppleIntelSNB*
-        errorCheck 'Failed to fix permissions for AppleIntelHD3000* and AppleIntelSNB*.'
-    fi
-    if [[ "$SMB" == "KEXT" ]]; then
-        echo 'Patching AppleIntelSNBGraphicsFB.kext...'
-        unzip -q "$LPATCHES/KextPatches/AppleIntelSNBGraphicsFB-AMD.kext.zip"
-        errorCheck 'Failed to patch AppleIntelSNBGraphicsFB.kext'
-        mv AppleIntelSNBGraphicsFB-AMD.kext AppleIntelSNBGraphicsFB.kext
-        errorCheck 'Failed to rename AppleIntelSNBGraphicsFB.kext'
-        echo 'Correcting permissions for AppleIntelSNBGraphicsFB.kext...'
-        fixPerms 'AppleIntelSNBGraphicsFB.kext'
-        errorCheck 'Failed to correct permissions for AppleIntelSNBGraphicsFB.kext.'
-    fi
-
-    if [[ $BACKLIGHT == "YES" ]]; then
-        echo 'Patching AppleBacklight.kext...'
-        backupIfNeeded 'AppleBacklight.kext'
-        unzip -q "$LPATCHES/KextPatches/AppleBacklight.kext.zip"
-        errorCheck 'Failed to patch AppleBacklight.kext'
-        echo 'Correcting permissions for AppleBacklight.kext...'
-        fixPerms 'AppleBacklight.kext'
-        errorCheck 'Failed to correct permissions AppleBacklight.kext'
-    fi
-
-    if [[ "$BACKLIGHTFIXUP" == "YES" ]]; then
-        echo 'Patching AppleBacklightFixup.kext'
-        unzip -q "$LPATCHES/KextPatches/AppleBacklightFixup.kext.zip"
-        errorCheck 'Failed to patch AppleBacklightFixup.kext'
-        echo 'Correcting permissions for AppleBacklightFixup.kext...'
-        fixPerms AppleBacklightFixup.kext
-        errorCheck 'Failed to correct permissions for AppleBacklightFixup.kext'
-    fi
-
-    if [[ "$VIT9696" == "YES" ]]; then
-        echo 'Patching WhateverGreen.kext and Lilu.kext...'
-        rm -rf WhateverGreen.kext
-        unzip -q "$LPATCHES/KextPatches/WhateverGreen.kext.zip"
-        errorCheck 'Failed to patch WhateverGreen.kext'
-        rm -rf Lilu.kext
-        unzip -q "$LPATCHES/KextPatches/Lilu.kext.zip"
-        echo 'Correcting permissions for WhateverGreen.kext and Lilu.kext...'
-        fixPerms WhateverGreen* Lilu*
-        errorCheck 'Failed to correct permissions for WhateverGreen.kext and Lilu.kext'
-    fi
-
     popd > /dev/null
-
-    if [[ "$TELEMETRY" == "YES" ]]; then
-        echo 'Deactivating com.apple.telemetry.plugin...'
-        pushd "$VOLUME/System/Library/UserEventPlugins" > /dev/null
-        mv -f com.apple.telemetry.plugin com.apple.telemetry.plugin.disabled
-        errorCheck 'Failed to deactivate com.apple.telemetry.plugin'
-        popd > /dev/null
-    fi
 
     if [[ "$BOOTPLIST" == "YES" ]]; then
         if [[ "$RECOVERY" == "YES" ]]; then
