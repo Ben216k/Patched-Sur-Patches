@@ -62,14 +62,26 @@ if [[ ! -d "$LPATCHES" ]]; then
     error "Error 3x1: The patches for PatchSystem.sh were not detected."
 fi
 
-if [[ "$1" == "--detect" ]] || [[ -z "$1" ]]; then
-    echo "Set to detect patches, restarting PatchSystem with NeededPatches..."
-    "$LPATCHES/Scripts/NeededPatches.sh" --rerun "$BACKPACK/Scripts" "$2"
-    exit $?
-elif echo "$1" | grep "/Volumes"; then
-    echo "Set to detect patches, restarting PatchSystem with NeededPatches..."
-    "$LPATCHES/Scripts/NeededPatches.sh" --rerun "$BACKPACK/Scripts" "$1"
-    exit $?
+if [[ -e "$LPATCHES/Scripts/NeededPatches.sh" ]]; then
+    if [[ "$1" == "--detect" ]] || [[ -z "$1" ]]; then
+        echo "Set to detect patches, restarting PatchSystem with NeededPatches..."
+        "$LPATCHES/Scripts/NeededPatches.sh" --rerun "$BACKPACK/Scripts" "$2"
+        exit $?
+    elif echo "$1" | grep "/Volumes"; then
+        echo "Set to detect patches, restarting PatchSystem with NeededPatches..."
+        "$LPATCHES/Scripts/NeededPatches.sh" --rerun "$BACKPACK/Scripts" "$1"
+        exit $?
+    fi
+else
+    if [[ "$1" == "--detect" ]] || [[ -z "$1" ]]; then
+        echo "Set to detect patches, restarting PatchSystem with NeededPatches..."
+        "$LPATCHES/NeededPatches.sh" --rerun "$BACKPACK" "$2"
+        exit $?
+    elif echo "$1" | grep "/Volumes"; then
+        echo "Set to detect patches, restarting PatchSystem with NeededPatches..."
+        "$LPATCHES/NeededPatches.sh" --rerun "$BACKPACK" "$1"
+        exit $?
+    fi
 fi
 
 # MARK: Functions for Later
