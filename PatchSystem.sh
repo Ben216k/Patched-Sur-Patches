@@ -132,6 +132,12 @@ backupIfNeeded() {
     fi
 }
 
+backupAndKeepIfNeeded() {
+    if [[ ! -d "$1".original ]]; then
+        cp "$1" "$1".original
+    fi
+}
+
 backupZIPIfNeeded() {
     if [[ ! -d "$1"-original.zip ]]; then
         zip -r "$1"-original.zip "$1"
@@ -177,7 +183,7 @@ while [[ $1 == -* ]]; do
         -u)
             echo '[CONFIG] Unpatching system.'
             echo 'Note: This may not fully (or correctly) remove all patches.'
-            error 'Uninstalling patches is not supported yet.'
+            # error 'Uninstalling patches is not supported yet.'
             ;;
         --wifi=mojaveHybrid)
             echo '[CONFIG] Will use Mojave-Hybrid WiFi patch.'
@@ -390,7 +396,7 @@ if [[ ! "$PATCHMODE" == "UNINSTALL" ]]; then
         popd > /dev/null
     elif [[ "$WIFIPATCH" == "nativePlus" ]]; then
         echo "Patching IO80211Family.kext with NativePlus..."
-        backupIfNeeded "IO80211Family.kext" 
+        backupAndKeepIfNeeded "IO80211Family.kext" 
         /usr/libexec/PlistBuddy -c "Set :IOKitPersonalities:Broadcom\ 802.11\ PCI:IONameMatch:0 $(ioreg -r -n ARPT | grep IOName | cut -c 19- | rev | cut -c 2- | rev)" IO80211Family.kext/Contents/PlugIns/AirPortBrcmNIC.kext/Contents/Info.plist
         errorCheck "Failed to patch IO80211Family.kext."
         echo "Correcting permissions for IO80211Family.kext..."
@@ -698,28 +704,6 @@ else
     pushd IONetworkingFamily.kext/Contents/Plugins > /dev/null
     restoreOriginals
     popd > /dev/null
-    
-    if [[ -f AppleGraphicsControl.kext.zip ]]; then
-        echo 'Restoring patched AppleGraphicsControl extension'
-        rm -rf AppleGraphicsControl.kext
-        unzip -q AppleGraphicsControl.kext.zip
-        rm AppleGraphicsControl.kext.zip
-    fi
-    echo 'Unpatching IntelHD3000.kexts'
-    rm -rf AppleIntelHD3000* AppleIntelSNB*
-    echo 'Unpatching LegacyUSBInjector.kext'
-    rm -rf LegacyUSBInjector.kext
-    echo 'Unpatching nvenet.kext'
-    rm -rf IONetworkingFamily.kext/Contents/Plugins/nvenet.kext
-    echo 'Unpatching Tesla kext...'
-    rm -rf *Tesla*
-    echo 'Removing @vit9696 Whatevergreen.kext and Lilu.kext'
-    rm -rf Whatevergreen.kext Lilu.kext
-    echo 'Removing iMac AppleBacklightFixup'
-    rm -rf AppleBacklightFixup.kext
-    echo 'Reactivating telemetry plugin'
-    echo 'WARNING: OpenGL will not be unpatched.'
-    mv -f "$VOLUME/System/Library/UserEventPlugins/com.apple.telemetry.plugin.disabled" "$VOLUME/System/Library/UserEventPlugins/com.apple.telemetry.plugin"
     
     popd > /dev/null
 fi
