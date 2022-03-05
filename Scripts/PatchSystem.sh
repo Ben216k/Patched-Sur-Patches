@@ -173,6 +173,7 @@ while [[ $1 == -* ]]; do
             echo '[CONFIG] Unpatching system.'
             echo 'Note: This may not fully (or correctly) remove all patches.'
             # error 'Uninstalling patches is not supported yet.'
+            PATCHMODE="UNINSTALL" 
             ;;
         --wifi=mojaveHybrid)
             echo '[CONFIG] Will use Mojave-Hybrid WiFi patch.'
