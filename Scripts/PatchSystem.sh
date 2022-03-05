@@ -20,35 +20,24 @@ LPATCHES="/Volumes/Image Volume"
 if [[ -d "$LPATCHES" ]]; then
     echo "[INFO] We're in a recovery environment."
     RECOVERY="YES"
-    BACKPACK="/Volumes/Image Volume"
 else
     echo "[INFO] We're booted into full macOS."
     RECOVERY="NO"
     if [[ -d "/Volumes/Install macOS Big Sur/KextPatches" ]]; then
         echo '[INFO] Using Install macOS Big Sur source.'
         LPATCHES="/Volumes/Install macOS Big Sur"
-        BACKPACK="/Volumes/Install macOS Big Sur"
     elif [[ -d "/Volumes/Install macOS Big Sur Beta/KextPatches" ]]; then
         echo '[INFO] Using Install macOS Big Sur Beta source.'
         LPATCHES="/Volumes/Install macOS Big Sur Beta"
-        BACKPACK="/Volumes/Install macOS Big Sur Beta"
     elif [[ -d "/Volumes/Install macOS Beta/KextPatches" ]]; then
         echo '[INFO] Using Install macOS Beta source.'
         LPATCHES="/Volumes/Install macOS Beta"
-        BACKPACK="/Volumes/Install macOS Beta"
     elif [[ -d "/usr/local/lib/Patched-Sur-Patches/KextPatches" ]]; then
         echo '[INFO] Using usr lib source.'
         LPATCHES="/usr/local/lib/Patched-Sur-Patches"
-        BACKPACK="/usr/local/lib/Patched-Sur-Patches"
     elif [[ -d "$(dirname $0)/../KextPatches" ]]; then
         echo '[INFO] Using dirname source.'
         LPATCHES="$(dirname $0)/.."
-
-        BACKPACK="$LPATCHES"
-
-        if [[ ! -e "$BACKPACK/NeededPatches.sh" ]]; then
-            BACKPACK="$LPATCHES"
-        fi
     fi
 fi
 
@@ -65,21 +54,21 @@ fi
 if [[ -e "$LPATCHES/Scripts/NeededPatches.sh" ]]; then
     if [[ "$1" == "--detect" ]] || [[ -z "$1" ]]; then
         echo "Set to detect patches, restarting PatchSystem with NeededPatches..."
-        "$LPATCHES/Scripts/NeededPatches.sh" --rerun "$BACKPACK/Scripts" "$2"
+        "$LPATCHES/Scripts/NeededPatches.sh" --rerun "$LPATCHES/Scripts" "$2"
         exit $?
     elif echo "$1" | grep "/Volumes"; then
         echo "Set to detect patches, restarting PatchSystem with NeededPatches..."
-        "$LPATCHES/Scripts/NeededPatches.sh" --rerun "$BACKPACK/Scripts" "$1"
+        "$LPATCHES/Scripts/NeededPatches.sh" --rerun "$LPATCHES/Scripts" "$1"
         exit $?
     fi
 else
     if [[ "$1" == "--detect" ]] || [[ -z "$1" ]]; then
         echo "Set to detect patches, restarting PatchSystem with NeededPatches..."
-        "$LPATCHES/NeededPatches.sh" --rerun "$BACKPACK" "$2"
+        "$LPATCHES/NeededPatches.sh" --rerun "$LPATCHES" "$2"
         exit $?
     elif echo "$1" | grep "/Volumes"; then
         echo "Set to detect patches, restarting PatchSystem with NeededPatches..."
-        "$LPATCHES/NeededPatches.sh" --rerun "$BACKPACK" "$1"
+        "$LPATCHES/NeededPatches.sh" --rerun "$LPATCHES" "$1"
         exit $?
     fi
 fi
@@ -132,6 +121,12 @@ backupIfNeeded() {
     fi
 }
 
+backupAndKeepIfNeeded() {
+    if [[ ! -d "$1".original ]]; then
+        cp "$1" "$1".original
+    fi
+}
+
 backupZIPIfNeeded() {
     if [[ ! -d "$1"-original.zip ]]; then
         zip -r "$1"-original.zip "$1"
@@ -177,7 +172,7 @@ while [[ $1 == -* ]]; do
         -u)
             echo '[CONFIG] Unpatching system.'
             echo 'Note: This may not fully (or correctly) remove all patches.'
-            error 'Uninstalling patches is not supported yet.'
+            # error 'Uninstalling patches is not supported yet.'
             ;;
         --wifi=mojaveHybrid)
             echo '[CONFIG] Will use Mojave-Hybrid WiFi patch.'
@@ -390,7 +385,7 @@ if [[ ! "$PATCHMODE" == "UNINSTALL" ]]; then
         popd > /dev/null
     elif [[ "$WIFIPATCH" == "nativePlus" ]]; then
         echo "Patching IO80211Family.kext with NativePlus..."
-        backupIfNeeded "IO80211Family.kext" 
+        backupAndKeepIfNeeded "IO80211Family.kext" 
         /usr/libexec/PlistBuddy -c "Set :IOKitPersonalities:Broadcom\ 802.11\ PCI:IONameMatch:0 $(ioreg -r -n ARPT | grep IOName | cut -c 19- | rev | cut -c 2- | rev)" IO80211Family.kext/Contents/PlugIns/AirPortBrcmNIC.kext/Contents/Info.plist
         errorCheck "Failed to patch IO80211Family.kext."
         echo "Correcting permissions for IO80211Family.kext..."
@@ -698,28 +693,6 @@ else
     pushd IONetworkingFamily.kext/Contents/Plugins > /dev/null
     restoreOriginals
     popd > /dev/null
-    
-    if [[ -f AppleGraphicsControl.kext.zip ]]; then
-        echo 'Restoring patched AppleGraphicsControl extension'
-        rm -rf AppleGraphicsControl.kext
-        unzip -q AppleGraphicsControl.kext.zip
-        rm AppleGraphicsControl.kext.zip
-    fi
-    echo 'Unpatching IntelHD3000.kexts'
-    rm -rf AppleIntelHD3000* AppleIntelSNB*
-    echo 'Unpatching LegacyUSBInjector.kext'
-    rm -rf LegacyUSBInjector.kext
-    echo 'Unpatching nvenet.kext'
-    rm -rf IONetworkingFamily.kext/Contents/Plugins/nvenet.kext
-    echo 'Unpatching Tesla kext...'
-    rm -rf *Tesla*
-    echo 'Removing @vit9696 Whatevergreen.kext and Lilu.kext'
-    rm -rf Whatevergreen.kext Lilu.kext
-    echo 'Removing iMac AppleBacklightFixup'
-    rm -rf AppleBacklightFixup.kext
-    echo 'Reactivating telemetry plugin'
-    echo 'WARNING: OpenGL will not be unpatched.'
-    mv -f "$VOLUME/System/Library/UserEventPlugins/com.apple.telemetry.plugin.disabled" "$VOLUME/System/Library/UserEventPlugins/com.apple.telemetry.plugin"
     
     popd > /dev/null
 fi
