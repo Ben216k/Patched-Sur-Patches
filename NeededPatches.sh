@@ -50,7 +50,7 @@ fi
 
 if [ -z "`ioreg -l | fgrep 802.11 | fgrep ac`" ]; then
     echo "(MORE):WIFI"
-    WIFI="--wifi=mojaveHybrid"
+    WIFI="--wifi=nativePlus"
 fi
 
 if [[ "$1" == "--rerun" ]]; then
