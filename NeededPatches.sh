@@ -49,7 +49,7 @@ then
 fi
 
 if [ -z "`ioreg -l | fgrep 802.11 | fgrep ac`" ]; then
-    echo "(MORE):WIFI"
+    echo "(MORE):WIFI-NEW"
     WIFI="--wifi=nativePlus"
 fi
 
